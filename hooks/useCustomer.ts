@@ -5,9 +5,13 @@ import { CustomerService } from "../services/customer.service";
 import { CustomerFormData } from "../types/customer";
 
 export function useCustomer() {
+  const [customers, setCustomers] = useState<any[]>([]);
+  const [customer, setCustomer] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-  const [customers, setCustomers] = useState<CustomerFormData[]>([]);
 
+  // ===========================
+  // Load All Customers
+  // ===========================
   async function loadCustomers() {
     try {
       setLoading(true);
@@ -16,36 +20,9 @@ export function useCustomer() {
 
       setCustomers(data || []);
     } catch (error) {
-      console.error("Load Customer Error:", error);
+      console.error(error);
     } finally {
       setLoading(false);
-    }
-  }
-
-  async function saveCustomer(customer: CustomerFormData) {
-    try {
-      setLoading(true);
-
-      await CustomerService.createCustomer(customer);
-
-      await loadCustomers();
-
-      return true;
-    } catch (error) {
-      console.error(error);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function deleteCustomer(id: string) {
-    try {
-      await CustomerService.deleteCustomer(id);
-
-      await loadCustomers();
-    } catch (error) {
-      console.error(error);
     }
   }
 
@@ -53,11 +30,112 @@ export function useCustomer() {
     loadCustomers();
   }, []);
 
+  // ===========================
+  // Save Customer
+  // ===========================
+  async function saveCustomer(customerData: CustomerFormData) {
+    try {
+      setLoading(true);
+
+      await CustomerService.createCustomer(customerData);
+
+      await loadCustomers();
+
+      alert("Customer Saved Successfully");
+
+      return true;
+    } catch (error) {
+      console.error(error);
+
+      alert("Unable To Save Customer");
+
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // ===========================
+  // Get Customer By ID
+  // ===========================
+  async function getCustomerById(id: string) {
+    try {
+      setLoading(true);
+
+      const data = await CustomerService.getCustomerById(id);
+
+      setCustomer(data);
+
+      return data;
+    } catch (error) {
+      console.error(error);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // ===========================
+  // Update Customer
+  // ===========================
+  async function updateCustomer(
+    id: string,
+    customerData: CustomerFormData
+  ) {
+    try {
+      setLoading(true);
+
+      await CustomerService.updateCustomer(id, customerData);
+
+      await loadCustomers();
+
+      alert("Customer Updated Successfully");
+
+      return true;
+    } catch (error) {
+      console.error(error);
+
+      alert("Unable To Update Customer");
+
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // ===========================
+  // Delete Customer
+  // ===========================
+  async function deleteCustomer(id: string) {
+    try {
+      setLoading(true);
+
+      await CustomerService.deleteCustomer(id);
+
+      await loadCustomers();
+
+      alert("Customer Deleted Successfully");
+
+      return true;
+    } catch (error) {
+      console.error(error);
+
+      alert("Unable To Delete Customer");
+
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return {
-    loading,
     customers,
-    saveCustomer,
-    deleteCustomer,
+    customer,
+    loading,
     loadCustomers,
+    saveCustomer,
+    getCustomerById,
+    updateCustomer,
+    deleteCustomer,
   };
 }

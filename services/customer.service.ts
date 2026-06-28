@@ -2,6 +2,9 @@ import { supabase } from "../lib/supabase";
 import { CustomerFormData } from "../types/customer";
 
 export class CustomerService {
+  // ===========================
+  // Create Customer
+  // ===========================
   static async createCustomer(customer: CustomerFormData) {
     const { data, error } = await supabase
       .from("customers")
@@ -20,6 +23,9 @@ export class CustomerService {
     return data;
   }
 
+  // ===========================
+  // Get All Customers
+  // ===========================
   static async getCustomers() {
     const { data, error } = await supabase
       .from("customers")
@@ -31,6 +37,24 @@ export class CustomerService {
     return data;
   }
 
+  // ===========================
+  // Get Single Customer
+  // ===========================
+  static async getCustomerById(id: string) {
+    const { data, error } = await supabase
+      .from("customers")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (error) throw error;
+
+    return data;
+  }
+
+  // ===========================
+  // Update Customer
+  // ===========================
   static async updateCustomer(
     id: string,
     customer: CustomerFormData
@@ -46,6 +70,9 @@ export class CustomerService {
     return data;
   }
 
+  // ===========================
+  // Delete Customer
+  // ===========================
   static async deleteCustomer(id: string) {
     const { error } = await supabase
       .from("customers")
