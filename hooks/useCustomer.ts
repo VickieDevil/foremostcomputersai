@@ -1,42 +1,63 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CustomerService } from "../services/customer.service";
 import { CustomerFormData } from "../types/customer";
 
 export function useCustomer() {
   const [loading, setLoading] = useState(false);
+  const [customers, setCustomers] = useState<CustomerFormData[]>([]);
 
-  const saveCustomer = async (customer: CustomerFormData) => {
+  async function loadCustomers() {
     try {
       setLoading(true);
 
-      console.log("Saving Customer...");
-      console.log(customer);
+      const data = await CustomerService.getCustomers();
 
-      const data = await CustomerService.createCustomer(customer);
+      setCustomers(data || []);
+    } catch (error) {
+      console.error("Load Customer Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
-      console.log("Customer Saved:", data);
-alert("Customer Saved");
+  async function saveCustomer(customer: CustomerFormData) {
+    try {
+      setLoading(true);
 
-      console.log("Supabase Response :", data);
+      await CustomerService.createCustomer(customer);
 
-      alert("Customer Saved Successfully");
+      await loadCustomers();
 
       return true;
-    } catch (error: any) {
-      console.error("SAVE ERROR :", error);
-alert(JSON.stringify(error, null, 2));
-      alert(error?.message || "Unable to Save Customer");
-
+    } catch (error) {
+      console.error(error);
       return false;
     } finally {
       setLoading(false);
     }
-  };
+  }
+
+  async function deleteCustomer(id: string) {
+    try {
+      await CustomerService.deleteCustomer(id);
+
+      await loadCustomers();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    loadCustomers();
+  }, []);
 
   return {
     loading,
+    customers,
     saveCustomer,
+    deleteCustomer,
+    loadCustomers,
   };
 }
