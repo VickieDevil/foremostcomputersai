@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Button from "./components/ui/Button";
 
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
@@ -113,18 +114,9 @@ const [documentCount, setDocumentCount] = useState(0);
             }}
           >
             <Link href="/customers/add">
-              <button
-                style={{
-                  padding: "12px 20px",
-                  background: "#2563eb",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: 8,
-                  cursor: "pointer",
-                }}
-              >
-                + Add Customer
-              </button>
+              <Button variant="primary">
+    + Add Customer
+</Button>
             </Link>
 
             <Link href="/customers">
