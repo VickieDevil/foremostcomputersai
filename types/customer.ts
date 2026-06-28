@@ -1,5 +1,5 @@
 export interface Customer {
-  id?: string;
+  id: string;
 
   full_name: string;
 
@@ -19,7 +19,9 @@ export interface Customer {
 
   status: string;
 
-  created_at?: string;
+  created_at: string;
+
+  updated_at?: string;
 }
 
 export interface CustomerFormData {

@@ -15,62 +15,72 @@ const inputStyle = {
   outline: "none",
 };
 
+const initialForm: CustomerFormData = {
+  full_name: "",
+  mobile: "",
+  email: "",
+  address: "",
+  aadhaar: "",
+  pan: "",
+  dob: "",
+  gender: "",
+  status: "Active",
+};
+
 export default function CustomerForm() {
   const { saveCustomer, loading } = useCustomer();
 
-  const [formData, setFormData] = useState<CustomerFormData>({
-    full_name: "",
-    mobile: "",
-    email: "",
-    address: "",
-    aadhaar: "",
-    pan: "",
-    dob: "",
-    gender: "",
-    status: "Active",
-  });
+  const [formData, setFormData] = useState<CustomerFormData>(initialForm);
 
   const [message, setMessage] = useState("");
+  const [messageColor, setMessageColor] = useState("#0284c7");
 
-  const handleChange = (
+  function handleChange(
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  ) {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
-  };
+  }
 
-  const handleSubmit = async (
+  async function handleSubmit(
     e: FormEvent<HTMLFormElement>
-  ) => {
+  ) {
     e.preventDefault();
-    
-    alert("Handle Submit Running");
 
-    console.log("Form Submitted");
-    console.log(formData);
+    setMessage("");
+
+    if (formData.mobile.length !== 10) {
+      setMessageColor("#dc2626");
+      setMessage("❌ Mobile number must be 10 digits");
+      return;
+    }
+
+    if (formData.aadhaar && formData.aadhaar.length !== 12) {
+      setMessageColor("#dc2626");
+      setMessage("❌ Aadhaar must be 12 digits");
+      return;
+    }
+
+    if (formData.pan && formData.pan.length !== 10) {
+      setMessageColor("#dc2626");
+      setMessage("❌ Invalid PAN Number");
+      return;
+    }
 
     const success = await saveCustomer(formData);
 
     if (success) {
-      setMessage("Customer Saved Successfully");
+      setMessageColor("#16a34a");
+      setMessage("✅ Customer Saved Successfully");
 
-      setFormData({
-        full_name: "",
-        mobile: "",
-        email: "",
-        address: "",
-        aadhaar: "",
-        pan: "",
-        dob: "",
-        gender: "",
-        status: "Active",
-      });
+      setFormData(initialForm);
     } else {
-      setMessage("Unable To Save Customer");
+      setMessageColor("#dc2626");
+      setMessage("❌ Unable To Save Customer");
     }
-  };
+  }
 
   return (
     <div
@@ -83,28 +93,28 @@ export default function CustomerForm() {
         boxShadow: "0 3px 12px rgba(0,0,0,.12)",
       }}
     >
-      <h2
-        style={{
-          marginBottom: 20,
-        }}
-      >
+      <h2 style={{ marginBottom: 20 }}>
         Add New Customer
       </h2>
 
       {message && (
         <div
           style={{
-            background: "#e0f2fe",
+            background: "#f8fafc",
+            color: messageColor,
+            border: `1px solid ${messageColor}`,
             padding: 12,
             marginBottom: 20,
-            borderRadius: 6,
+            borderRadius: 8,
+            fontWeight: 600,
           }}
         >
           {message}
         </div>
       )}
 
-      <form onSubmit={handleSubmit}>        <input
+      <form onSubmit={handleSubmit}>
+        <input
           type="text"
           name="full_name"
           placeholder="Full Name"
@@ -121,6 +131,7 @@ export default function CustomerForm() {
           value={formData.mobile}
           onChange={handleChange}
           style={inputStyle}
+          maxLength={10}
           required
         />
 
@@ -149,6 +160,7 @@ export default function CustomerForm() {
           value={formData.aadhaar}
           onChange={handleChange}
           style={inputStyle}
+          maxLength={12}
         />
 
         <input
@@ -158,6 +170,7 @@ export default function CustomerForm() {
           value={formData.pan}
           onChange={handleChange}
           style={inputStyle}
+          maxLength={10}
         />
 
         <input
@@ -188,7 +201,9 @@ export default function CustomerForm() {
         >
           <option value="Active">Active</option>
           <option value="Inactive">Inactive</option>
-        </select>        <button
+        </select>
+
+        <button
           type="submit"
           disabled={loading}
           style={{
@@ -200,6 +215,7 @@ export default function CustomerForm() {
             borderRadius: "8px",
             fontSize: "16px",
             cursor: loading ? "not-allowed" : "pointer",
+            transition: ".2s",
           }}
         >
           {loading ? "Saving Customer..." : "Save Customer"}

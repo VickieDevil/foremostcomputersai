@@ -1,13 +1,13 @@
-export interface ActivityData {
-  id?: string;
+export interface Activity {
+  id: string;
 
-  customer_id: string;
+  customer_id: string | null;
 
   activity_type: string;
 
   title: string;
 
-  description?: string;
+  description: string;
 
-  created_at?: string;
+  created_at: string;
 }
