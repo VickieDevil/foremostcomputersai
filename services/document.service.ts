@@ -1,133 +1,117 @@
 import { supabase } from "../lib/supabase";
-import { DocumentData } from "../types/document";
+import {
+  Document,
+  DocumentFormData,
+} from "../types/document";
+
+const BUCKET = "documents";
 
 export class DocumentService {
-  // ==========================================
-  // Upload File
-  // ==========================================
-  static async uploadFile(file: File) {
-    const fileName = `${Date.now()}-${file.name}`;
-
-    const { error } = await supabase.storage
+  static async getDocuments() {
+    const { data, error } = await supabase
       .from("documents")
-      .upload(fileName, file);
+      .select("*")
+      .order("created_at", {
+        ascending: false,
+      });
 
     if (error) throw error;
 
-    const { data } = supabase.storage
+    return data as Document[];
+  }
+
+  static async getCustomerDocuments(
+    customerId: string
+  ) {
+    const { data, error } = await supabase
       .from("documents")
+      .select("*")
+      .eq("customer_id", customerId)
+      .order("created_at", {
+        ascending: false,
+      });
+
+    if (error) throw error;
+
+    return data as Document[];
+  }
+
+  static async uploadDocument(
+    form: DocumentFormData
+  ) {
+    if (!form.file)
+      throw new Error("No file selected");
+
+    const fileName = `${Date.now()}-${form.file.name}`;
+
+    const { error: uploadError } =
+      await supabase.storage
+        .from(BUCKET)
+        .upload(fileName, form.file);
+
+    if (uploadError) throw uploadError;
+
+    const {
+      data: { publicUrl },
+    } = supabase.storage
+      .from(BUCKET)
       .getPublicUrl(fileName);
 
-    return data.publicUrl;
-  }
+    const { data, error } =
+      await supabase
+        .from("documents")
+        .insert([
+          {
+            customer_id:
+              form.customer_id,
 
-  // ==========================================
-  // Save Document
-  // ==========================================
-  static async saveDocument(document: DocumentData) {
-    const { data, error } = await supabase
-      .from("documents")
-      .insert([document])
-      .select();
+            title: form.title,
 
-    if (error) throw error;
+            document_type:
+              form.document_type,
 
-    return data;
-  }
+            file_name:
+              form.file.name,
 
-  // ==========================================
-  // Customer Documents
-  // ==========================================
-  static async getDocuments(customerId: string) {
-    const { data, error } = await supabase
-      .from("documents")
-      .select(`
-        *,
-        customers (
-          full_name,
-          mobile
-        )
-      `)
-      .eq("customer_id", customerId)
-      .order("created_at", { ascending: false });
+            file_url: publicUrl,
 
-    if (error) throw error;
+            file_size:
+              form.file.size,
 
-    return data;
-  }
+            mime_type:
+              form.file.type,
 
-  // ==========================================
-  // All Documents
-  // ==========================================
-  static async getAllDocuments() {
-    const { data, error } = await supabase
-      .from("documents")
-      .select(`
-        *,
-        customers (
-          full_name,
-          mobile
-        )
-      `)
-      .order("created_at", { ascending: false });
+            uploaded_by:
+              "Admin",
+
+            remarks:
+              form.remarks ?? "",
+          },
+        ])
+        .select();
 
     if (error) throw error;
 
     return data;
   }
 
-  // ==========================================
-  // Single Document
-  // ==========================================
-  static async getDocumentById(id: string) {
-    const { data, error } = await supabase
-      .from("documents")
-      .select(`
-        *,
-        customers (
-          full_name,
-          mobile
-        )
-      `)
-      .eq("id", id)
-      .single();
+  static async deleteDocument(
+    doc: Document
+  ) {
+    const fileName =
+      doc.file_url.split("/").pop();
 
-    if (error) throw error;
+    if (fileName) {
+      await supabase.storage
+        .from(BUCKET)
+        .remove([fileName]);
+    }
 
-    return data;
-  }
-
-  // ==========================================
-  // Search Documents
-  // ==========================================
-  static async searchDocuments(search: string) {
-    const { data, error } = await supabase
-      .from("documents")
-      .select(`
-        *,
-        customers (
-          full_name,
-          mobile
-        )
-      `)
-      .or(
-        `document_name.ilike.%${search}%,document_type.ilike.%${search}%`
-      )
-      .order("created_at", { ascending: false });
-
-    if (error) throw error;
-
-    return data;
-  }
-
-  // ==========================================
-  // Delete Document
-  // ==========================================
-  static async deleteDocument(id: string) {
-    const { error } = await supabase
-      .from("documents")
-      .delete()
-      .eq("id", id);
+    const { error } =
+      await supabase
+        .from("documents")
+        .delete()
+        .eq("id", doc.id);
 
     if (error) throw error;
 
