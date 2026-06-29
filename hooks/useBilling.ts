@@ -1,26 +1,29 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ActivityService } from "../services/activity.service";
-import { Activity } from "../types/activity";
+import { BillingService } from "../services/billing.service";
+import {
+  Billing,
+  BillingFormData,
+} from "../types/billing";
 
-export function useActivity(customerId?: string) {
-  const [activities, setActivities] = useState<Activity[]>([]);
+export function useBilling(customerId?: string) {
+  const [bills, setBills] = useState<Billing[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    loadActivities();
+    loadBills();
   }, [customerId]);
 
-  async function loadActivities() {
+  async function loadBills() {
     try {
       setLoading(true);
 
       const data = customerId
-        ? await ActivityService.getCustomerActivities(customerId)
-        : await ActivityService.getAll();
+        ? await BillingService.getCustomerBills(customerId)
+        : await BillingService.getBills();
 
-      setActivities(data || []);
+      setBills(data || []);
     } catch (error) {
       console.error(error);
     } finally {
@@ -28,15 +31,15 @@ export function useActivity(customerId?: string) {
     }
   }
 
-  async function addActivity(
-    activity: Partial<Activity>
+  async function addBill(
+    bill: BillingFormData
   ): Promise<boolean> {
     try {
       setLoading(true);
 
-      await ActivityService.create(activity);
+      await BillingService.createBill(bill);
 
-      await loadActivities();
+      await loadBills();
 
       return true;
     } catch (error) {
@@ -48,15 +51,15 @@ export function useActivity(customerId?: string) {
     }
   }
 
-  async function removeActivity(
+  async function deleteBill(
     id: string
   ): Promise<boolean> {
     try {
       setLoading(true);
 
-      await ActivityService.delete(id);
+      await BillingService.deleteBill(id);
 
-      await loadActivities();
+      await loadBills();
 
       return true;
     } catch (error) {
@@ -69,10 +72,10 @@ export function useActivity(customerId?: string) {
   }
 
   return {
-    activities,
+    bills,
     loading,
-    loadActivities,
-    addActivity,
-    removeActivity,
+    loadBills,
+    addBill,
+    deleteBill,
   };
 }

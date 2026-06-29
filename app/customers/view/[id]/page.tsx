@@ -9,6 +9,7 @@ import { useDocument } from "../../../../hooks/useDocument";
 import CustomerProfile from "./components/CustomerProfile";
 import CustomerStats from "./components/CustomerStats";
 import CustomerActions from "./components/CustomerActions";
+import CustomerActivities from "./components/CustomerActivities";
 import CustomerDocuments from "./components/CustomerDocuments";
 import CustomerTimeline from "./components/CustomerTimeline";
 import CustomerAISummary from "./components/CustomerAISummary";
@@ -82,7 +83,7 @@ export default function ViewCustomerPage() {
       <CustomerActions customerId={customer.id} />
 
       <CustomerServices customerId={customer.id} />
-
+      <CustomerActivities customerId={customer.id} />
       <CustomerDocuments
         customerId={customer.id}
         documents={documents}
