@@ -156,7 +156,14 @@ export default function CustomersPage() {
                 <th>Mobile</th>
                 <th>Email</th>
                 <th>Status</th>
-                <th width="260">Actions</th>
+                <th
+  style={{
+    width: 260,
+    padding: 15,
+  }}
+>
+  Actions
+</th>
               </tr>
             </thead>
 

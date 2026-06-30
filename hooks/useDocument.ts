@@ -17,16 +17,18 @@ export function useDocument(
     useState(false);
 
   useEffect(() => {
-    loadDocuments();
+    loadDocuments(customerId);
   }, [customerId]);
 
-  async function loadDocuments() {
+  async function loadDocuments(
+    customer?: string
+  ) {
     try {
       setLoading(true);
 
-      const data = customerId
+      const data = customer
         ? await DocumentService.getCustomerDocuments(
-            customerId
+            customer
           )
         : await DocumentService.getDocuments();
 
@@ -48,7 +50,7 @@ export function useDocument(
         form
       );
 
-      await loadDocuments();
+      await loadDocuments(customerId);
 
       return true;
     } catch (error) {
@@ -61,16 +63,31 @@ export function useDocument(
   }
 
   async function deleteDocument(
-    doc: Document
+    id: string,
+    customer?: string
   ): Promise<boolean> {
     try {
       setLoading(true);
+
+      const doc = documents.find(
+        (d) => d.id === id
+      );
+
+      if (!doc) {
+        console.warn(
+          "Document not found:",
+          id
+        );
+        return false;
+      }
 
       await DocumentService.deleteDocument(
         doc
       );
 
-      await loadDocuments();
+      await loadDocuments(
+        customer ?? customerId
+      );
 
       return true;
     } catch (error) {

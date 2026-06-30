@@ -5,18 +5,21 @@ import { useParams } from "next/navigation";
 
 import { useCustomer } from "../../../../hooks/useCustomer";
 import { useDocument } from "../../../../hooks/useDocument";
+import { useTimeline } from "../../../../hooks/useTimeline";
 
 import CustomerProfile from "./components/CustomerProfile";
 import CustomerStats from "./components/CustomerStats";
 import CustomerActions from "./components/CustomerActions";
 import CustomerActivities from "./components/CustomerActivities";
 import CustomerDocuments from "./components/CustomerDocuments";
-import CustomerTimeline from "./components/CustomerTimeline";
+import TimelineCard from "./components/TimelineCard";
 import CustomerAISummary from "./components/CustomerAISummary";
 import CustomerServices from "./components/CustomerServices";
 
 export default function ViewCustomerPage() {
   const params = useParams();
+
+  const customerId = params.id as string;
 
   const {
     customer,
@@ -28,14 +31,19 @@ export default function ViewCustomerPage() {
     documents,
     loadDocuments,
     deleteDocument,
-  } = useDocument();
+  } = useDocument(customerId);
+
+  const {
+    timeline,
+    loading: timelineLoading,
+  } = useTimeline(customerId);
 
   useEffect(() => {
-    if (params.id) {
-      getCustomerById(params.id as string);
-      loadDocuments(params.id as string);
-    }
-  }, [params.id]);
+    if (!customerId) return;
+
+    getCustomerById(customerId);
+    loadDocuments();
+  }, [customerId]);
 
   if (loading) {
     return (
@@ -80,19 +88,32 @@ export default function ViewCustomerPage() {
         documents={documents}
       />
 
-      <CustomerActions customerId={customer.id} />
+      <CustomerActions
+        customerId={customer.id}
+      />
 
-      <CustomerServices customerId={customer.id} />
-      <CustomerActivities customerId={customer.id} />
+      <CustomerServices
+        customerId={customer.id}
+      />
+
+      <CustomerActivities
+        customerId={customer.id}
+      />
+
       <CustomerDocuments
         customerId={customer.id}
         documents={documents}
         deleteDocument={deleteDocument}
       />
 
-      <CustomerTimeline />
+      <TimelineCard
+        timeline={timeline}
+        loading={timelineLoading}
+      />
 
-      <CustomerAISummary customer={customer} />
+      <CustomerAISummary
+        customer={customer}
+      />
     </div>
   );
 }

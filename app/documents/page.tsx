@@ -12,20 +12,25 @@ export default function DocumentsPage() {
   const {
     documents,
     loading,
-    loadAllDocuments,
-    searchDocuments,
+    loadDocuments,
     deleteDocument,
   } = useDocument();
 
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    loadAllDocuments();
+    loadDocuments();
   }, []);
 
-  useEffect(() => {
-    searchDocuments(search);
-  }, [search]);
+  const filteredDocuments = documents.filter((doc: any) => {
+    const value = search.toLowerCase();
+
+    return (
+      doc.document_name?.toLowerCase().includes(value) ||
+      doc.document_type?.toLowerCase().includes(value) ||
+      doc.customers?.full_name?.toLowerCase().includes(value)
+    );
+  });
 
   return (
     <div
@@ -68,6 +73,7 @@ export default function DocumentsPage() {
           </div>
 
           <input
+            type="text"
             placeholder="Search Document..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -81,7 +87,9 @@ export default function DocumentsPage() {
           />
 
           {loading ? (
-            <h3>Loading...</h3>
+            <h3>Loading Documents...</h3>
+          ) : filteredDocuments.length === 0 ? (
+            <h3>No Documents Found</h3>
           ) : (
             <table
               style={{
@@ -106,7 +114,7 @@ export default function DocumentsPage() {
               </thead>
 
               <tbody>
-                {documents.map((doc: any) => (
+                {filteredDocuments.map((doc: any) => (
                   <tr key={doc.id}>
                     <td style={{ padding: 12 }}>
                       {doc.customers?.full_name || "-"}
@@ -117,40 +125,38 @@ export default function DocumentsPage() {
                     <td>{doc.document_type}</td>
 
                     <td>
-                      {new Date(
-                        doc.created_at
-                      ).toLocaleDateString()}
+                      {new Date(doc.created_at).toLocaleDateString()}
                     </td>
 
                     <td>
                       <a
                         href={doc.file_url}
                         target="_blank"
+                        rel="noreferrer"
                       >
                         <button>View</button>
                       </a>
 
                       <button
-                        style={{
-                          marginLeft: 8,
-                        }}
+                        style={{ marginLeft: 8 }}
                         onClick={() =>
-                          window.open(
-                            doc.file_url,
-                            "_blank"
-                          )
+                          window.open(doc.file_url, "_blank")
                         }
                       >
                         Download
                       </button>
 
                       <button
-                        style={{
-                          marginLeft: 8,
+                        style={{ marginLeft: 8 }}
+                        onClick={async () => {
+                          if (
+                            confirm(
+                              `Delete ${doc.document_name}?`
+                            )
+                          ) {
+                            await deleteDocument(doc.id);
+                          }
                         }}
-                        onClick={() =>
-                          deleteDocument(doc.id)
-                        }
                       >
                         Delete
                       </button>

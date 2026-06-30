@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { useBilling } from "../../../../../hooks/useBilling";
-import { BillingFormData } from "../../../../../types/billing";
+import {
+  Billing,
+  BillingFormData,
+} from "../../../../../types/billing";
 
 interface Props {
   customerId: string;

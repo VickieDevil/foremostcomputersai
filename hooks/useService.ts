@@ -3,30 +3,55 @@
 import { useEffect, useState } from "react";
 import { ServiceService } from "../services/service.service";
 import {
-  CustomerService,
-  CustomerServiceForm,
+  Service,
+  ServiceFormData,
 } from "../types/service";
 
-export function useService(customerId?: string) {
-  const [services, setServices] = useState<CustomerService[]>([]);
-  const [loading, setLoading] = useState(false);
+interface ServiceStats {
+  total: number;
+  completed: number;
+  pending: number;
+  inProgress: number;
+  cancelled: number;
+  revenue: number;
+  received: number;
+  due: number;
+}
 
-  const [stats, setStats] = useState({
-    total: 0,
-    completed: 0,
-    pending: 0,
-    revenue: 0,
-  });
+const defaultStats: ServiceStats = {
+  total: 0,
+  completed: 0,
+  pending: 0,
+  inProgress: 0,
+  cancelled: 0,
+  revenue: 0,
+  received: 0,
+  due: 0,
+};
+
+export function useService(
+  customerId?: string
+) {
+  const [services, setServices] =
+    useState<Service[]>([]);
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const [stats, setStats] =
+    useState<ServiceStats>(defaultStats);
 
   async function loadServices() {
     try {
       setLoading(true);
 
       const data = customerId
-        ? await ServiceService.getCustomerServices(customerId)
+        ? await ServiceService.getCustomerServices(
+            customerId
+          )
         : await ServiceService.getServices();
 
-      setServices(data);
+      setServices(data || []);
     } catch (error) {
       console.error(error);
     } finally {
@@ -46,24 +71,23 @@ export function useService(customerId?: string) {
   }
 
   async function addService(
-    service: CustomerServiceForm
-  ) {
+    service: ServiceFormData
+  ): Promise<boolean> {
     try {
       setLoading(true);
 
-      await ServiceService.createService(service);
+      await ServiceService.createService(
+        service
+      );
 
-      await loadServices();
-      await loadStats();
-
-      alert("Service Added Successfully");
+      await Promise.all([
+        loadServices(),
+        loadStats(),
+      ]);
 
       return true;
     } catch (error) {
       console.error(error);
-
-      alert("Unable To Add Service");
-
       return false;
     } finally {
       setLoading(false);
@@ -72,8 +96,8 @@ export function useService(customerId?: string) {
 
   async function updateService(
     id: string,
-    service: CustomerServiceForm
-  ) {
+    service: Partial<ServiceFormData>
+  ): Promise<boolean> {
     try {
       setLoading(true);
 
@@ -82,40 +106,38 @@ export function useService(customerId?: string) {
         service
       );
 
-      await loadServices();
-      await loadStats();
-
-      alert("Service Updated Successfully");
+      await Promise.all([
+        loadServices(),
+        loadStats(),
+      ]);
 
       return true;
     } catch (error) {
       console.error(error);
-
-      alert("Unable To Update Service");
-
       return false;
     } finally {
       setLoading(false);
     }
   }
 
-  async function deleteService(id: string) {
+  async function deleteService(
+    id: string
+  ): Promise<boolean> {
     try {
       setLoading(true);
 
-      await ServiceService.deleteService(id);
+      await ServiceService.deleteService(
+        id
+      );
 
-      await loadServices();
-      await loadStats();
-
-      alert("Service Deleted Successfully");
+      await Promise.all([
+        loadServices(),
+        loadStats(),
+      ]);
 
       return true;
     } catch (error) {
       console.error(error);
-
-      alert("Unable To Delete Service");
-
       return false;
     } finally {
       setLoading(false);
@@ -132,6 +154,7 @@ export function useService(customerId?: string) {
     loading,
     stats,
     loadServices,
+    loadStats,
     addService,
     updateService,
     deleteService,
