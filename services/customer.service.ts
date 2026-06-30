@@ -157,4 +157,46 @@ export class CustomerService {
 
     return (data ?? []) as Customer[];
   }
+// ===========================================
+// Get Pending Services For Invoice
+// ===========================================
+
+static async getPendingServices(
+  customerId: string
+) {
+  const { data, error } = await supabase
+    .from("customer_services")
+    .select("*")
+    .eq("customer_id", customerId)
+    .neq("status", "Cancelled")
+    .neq("status", "Rejected")
+    .order("created_at", {
+      ascending: false,
+    });
+
+  if (error) throw error;
+
+  return data ?? [];
+}
+
+// ===========================================
+// Mark Service As Completed / Invoiced
+// ===========================================
+
+static async markServiceInvoiced(
+  serviceId: string
+) {
+  const { data, error } = await supabase
+    .from("customer_services")
+    .update({
+      status: "Completed",
+    })
+    .eq("id", serviceId)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return data;
+}
 }

@@ -2,13 +2,15 @@ export type InvoiceStatus =
   | "Draft"
   | "Pending"
   | "Paid"
+  | "Partially Paid"
   | "Cancelled";
 
 export type PaymentMethod =
   | "Cash"
   | "UPI"
   | "Card"
-  | "Bank Transfer";
+  | "Bank Transfer"
+  | "Cheque";
 
 export interface InvoiceItem {
   id?: string;
@@ -37,6 +39,10 @@ export interface Invoice {
 
   customer_mobile: string;
 
+  customer_email?: string;
+
+  customer_address?: string;
+
   items: InvoiceItem[];
 
   subtotal: number;
@@ -47,6 +53,10 @@ export interface Invoice {
 
   grand_total: number;
 
+  paid_amount: number;
+
+  due_amount: number;
+
   payment_method: PaymentMethod;
 
   status: InvoiceStatus;
@@ -56,4 +66,24 @@ export interface Invoice {
   created_at?: string;
 
   updated_at?: string;
+}
+
+export interface InvoiceFormData {
+  customer_id: string;
+
+  customer_name: string;
+
+  customer_mobile: string;
+
+  customer_email?: string;
+
+  customer_address?: string;
+
+  items: InvoiceItem[];
+
+  payment_method: PaymentMethod;
+
+  remarks?: string;
+
+  status: InvoiceStatus;
 }
