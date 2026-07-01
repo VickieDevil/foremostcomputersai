@@ -1,9 +1,57 @@
 "use client";
 
+import { useMemo, useState } from "react";
+
 import { useActivity } from "../../hooks/useActivity";
 
+import ActivityList from "./components/ActivityList";
+import ActivityFilters from "./components/ActivityFilters";
+
 export default function ActivityPage() {
-  const { activities, loading } = useActivity();
+  const {
+    activities,
+    loading,
+  } = useActivity();
+
+  const [search, setSearch] =
+    useState("");
+
+  const [filter, setFilter] =
+    useState("All");
+
+  const filteredActivities =
+    useMemo(() => {
+      let list = [...activities];
+
+      if (search.trim()) {
+        const value =
+          search.toLowerCase();
+
+        list = list.filter(
+          (item: any) =>
+            item.title
+              ?.toLowerCase()
+              .includes(value) ||
+            item.description
+              ?.toLowerCase()
+              .includes(value)
+        );
+      }
+
+      if (filter !== "All") {
+        list = list.filter(
+          (item: any) =>
+            item.activity_type ===
+            filter
+        );
+      }
+
+      return list;
+    }, [
+      activities,
+      search,
+      filter,
+    ]);
 
   return (
     <div
@@ -11,28 +59,27 @@ export default function ActivityPage() {
         padding: 30,
       }}
     >
-      <h1>Activity Timeline</h1>
+      <h1
+        style={{
+          marginBottom: 25,
+        }}
+      >
+        Activity Timeline
+      </h1>
 
-      {loading && <p>Loading...</p>}
+      <ActivityFilters
+        search={search}
+        setSearch={setSearch}
+        filter={filter}
+        setFilter={setFilter}
+      />
 
-      {!loading &&
-        activities.map((item) => (
-          <div
-            key={item.id}
-            style={{
-              padding: 20,
-              border: "1px solid #ddd",
-              borderRadius: 8,
-              marginBottom: 15,
-            }}
-          >
-            <h3>{item.title}</h3>
-
-            <p>{item.description}</p>
-
-            <small>{item.activity_type}</small>
-          </div>
-        ))}
+      <ActivityList
+        activities={
+          filteredActivities
+        }
+        loading={loading}
+      />
     </div>
   );
 }

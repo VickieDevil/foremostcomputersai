@@ -4,15 +4,19 @@ import { Customer } from "../../../types/customer";
 
 interface Props {
   customers: Customer[];
-  customerId: string;
+  value: string;
   onChange: (customerId: string) => void;
 }
 
 export default function CustomerSelector({
   customers,
-  customerId,
+  value,
   onChange,
 }: Props) {
+  const selectedCustomer = customers.find(
+    (c) => c.id === value
+  );
+
   return (
     <div
       style={{
@@ -33,7 +37,7 @@ export default function CustomerSelector({
       </h3>
 
       <select
-        value={customerId}
+        value={value}
         onChange={(e) =>
           onChange(e.target.value)
         }
@@ -54,27 +58,28 @@ export default function CustomerSelector({
             key={customer.id}
             value={customer.id}
           >
-            {customer.full_name}
-            {" - "}
-            {customer.mobile}
+            {customer.full_name} - {customer.mobile}
           </option>
         ))}
       </select>
 
-      {customerId && (
+      {selectedCustomer && (
         <div
           style={{
             marginTop: 15,
             padding: 12,
             background: "#eff6ff",
             borderRadius: 8,
+            fontSize: 14,
           }}
         >
-          {
-            customers.find(
-              (c) => c.id === customerId
-            )?.address
-          }
+          <strong>Address:</strong>{" "}
+          {selectedCustomer.address ||
+            "N/A"}
+          <br />
+          <strong>Email:</strong>{" "}
+          {selectedCustomer.email ||
+            "N/A"}
         </div>
       )}
     </div>

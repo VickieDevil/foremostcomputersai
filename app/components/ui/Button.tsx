@@ -2,99 +2,79 @@
 
 import React from "react";
 
-type ButtonVariant =
+type Variant =
   | "primary"
   | "secondary"
   | "success"
   | "danger"
   | "warning"
-  | "dark";
+  | "outline";
 
-interface ButtonProps {
+interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
-
-  onClick?: () => void;
-
-  type?: "button" | "submit" | "reset";
-
-  variant?: ButtonVariant;
-
-  disabled?: boolean;
-
-  loading?: boolean;
-
+  variant?: Variant;
   fullWidth?: boolean;
-
-  style?: React.CSSProperties;
+  loading?: boolean;
 }
 
-const colors = {
-  primary: "#2563eb",
+const colors: Record<Variant, React.CSSProperties> = {
+  primary: {
+    background: "#2563eb",
+    color: "#fff",
+  },
 
-  secondary: "#6b7280",
+  secondary: {
+    background: "#64748b",
+    color: "#fff",
+  },
 
-  success: "#16a34a",
+  success: {
+    background: "#16a34a",
+    color: "#fff",
+  },
 
-  danger: "#dc2626",
+  danger: {
+    background: "#dc2626",
+    color: "#fff",
+  },
 
-  warning: "#f59e0b",
+  warning: {
+    background: "#f59e0b",
+    color: "#fff",
+  },
 
-  dark: "#111827",
+  outline: {
+    background: "#fff",
+    color: "#2563eb",
+    border: "1px solid #2563eb",
+  },
 };
 
 export default function Button({
   children,
-
-  onClick,
-
-  type = "button",
-
   variant = "primary",
-
-  disabled = false,
-
-  loading = false,
-
   fullWidth = false,
-
+  loading = false,
   style,
+  disabled,
+  ...props
 }: ButtonProps) {
   return (
     <button
-      type={type}
-      onClick={onClick}
+      {...props}
       disabled={disabled || loading}
       style={{
-        background: colors[variant],
-
-        color: "#ffffff",
-
+        padding: "11px 18px",
+        borderRadius: 8,
         border: "none",
-
-        borderRadius: 10,
-
-        padding: "12px 20px",
-
-        fontSize: 15,
-
+        cursor: loading ? "wait" : "pointer",
         fontWeight: 600,
-
-        cursor:
-          disabled || loading
-            ? "not-allowed"
-            : "pointer",
-
-        opacity:
-          disabled || loading
-            ? 0.6
-            : 1,
-
-        transition: "0.25s",
-
-        width: fullWidth
-          ? "100%"
-          : "auto",
-
+        fontSize: 15,
+        transition: ".2s",
+        width: fullWidth ? "100%" : undefined,
+        opacity: disabled ? .6 : 1,
+        ...colors[variant],
         ...style,
       }}
     >

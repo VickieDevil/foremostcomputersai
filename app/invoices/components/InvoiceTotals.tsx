@@ -2,8 +2,8 @@
 
 interface Props {
   subtotal: number;
-  gstTotal: number;
-  discountTotal: number;
+  gst: number;
+  discount: number;
   grandTotal: number;
 }
 
@@ -16,8 +16,8 @@ const rowStyle: React.CSSProperties = {
 
 export default function InvoiceTotals({
   subtotal,
-  gstTotal,
-  discountTotal,
+  gst,
+  discount,
   grandTotal,
 }: Props) {
   return (
@@ -27,8 +27,7 @@ export default function InvoiceTotals({
         padding: 20,
         borderRadius: 12,
         marginTop: 20,
-        boxShadow:
-          "0 2px 8px rgba(0,0,0,.08)",
+        boxShadow: "0 2px 8px rgba(0,0,0,.08)",
       }}
     >
       <h3
@@ -42,26 +41,17 @@ export default function InvoiceTotals({
 
       <div style={rowStyle}>
         <span>Subtotal</span>
-
-        <strong>
-          ₹ {subtotal.toFixed(2)}
-        </strong>
+        <strong>₹ {subtotal.toFixed(2)}</strong>
       </div>
 
       <div style={rowStyle}>
         <span>GST</span>
-
-        <strong>
-          ₹ {gstTotal.toFixed(2)}
-        </strong>
+        <strong>₹ {gst.toFixed(2)}</strong>
       </div>
 
       <div style={rowStyle}>
         <span>Discount</span>
-
-        <strong>
-          ₹ {discountTotal.toFixed(2)}
-        </strong>
+        <strong>₹ {discount.toFixed(2)}</strong>
       </div>
 
       <hr
@@ -73,8 +63,7 @@ export default function InvoiceTotals({
       <div
         style={{
           display: "flex",
-          justifyContent:
-            "space-between",
+          justifyContent: "space-between",
           fontSize: 20,
           fontWeight: 700,
           color: "#2563eb",
@@ -82,9 +71,7 @@ export default function InvoiceTotals({
       >
         <span>Grand Total</span>
 
-        <span>
-          ₹ {grandTotal.toFixed(2)}
-        </span>
+        <span>₹ {grandTotal.toFixed(2)}</span>
       </div>
     </div>
   );

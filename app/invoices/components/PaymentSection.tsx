@@ -1,5 +1,7 @@
 "use client";
 
+import React from "react";
+
 import {
   PaymentMethod,
   InvoiceStatus,
@@ -7,10 +9,12 @@ import {
 
 interface Props {
   paymentMethod: PaymentMethod;
+
   status: InvoiceStatus;
+
   remarks: string;
 
-  onPaymentChange: (
+  onPaymentMethodChange: (
     value: PaymentMethod
   ) => void;
 
@@ -22,9 +26,7 @@ interface Props {
     value: string
   ) => void;
 
-  onSave: () => void;
-
-  loading?: boolean;
+  children?: React.ReactNode;
 }
 
 const paymentMethods: PaymentMethod[] = [
@@ -47,11 +49,10 @@ export default function PaymentSection({
   paymentMethod,
   status,
   remarks,
-  onPaymentChange,
+  onPaymentMethodChange,
   onStatusChange,
   onRemarksChange,
-  onSave,
-  loading = false,
+  children,
 }: Props) {
   return (
     <div
@@ -67,6 +68,7 @@ export default function PaymentSection({
       <h3
         style={{
           marginTop: 0,
+          marginBottom: 20,
         }}
       >
         Payment Details
@@ -88,7 +90,7 @@ export default function PaymentSection({
           <select
             value={paymentMethod}
             onChange={(e) =>
-              onPaymentChange(
+              onPaymentMethodChange(
                 e.target
                   .value as PaymentMethod
               )
@@ -140,7 +142,9 @@ export default function PaymentSection({
           marginTop: 20,
         }}
       >
-        <label>Remarks</label>
+        <label>
+          Remarks
+        </label>
 
         <textarea
           value={remarks}
@@ -157,26 +161,7 @@ export default function PaymentSection({
         />
       </div>
 
-      <button
-        onClick={onSave}
-        disabled={loading}
-        style={{
-          marginTop: 20,
-          width: "100%",
-          background: "#2563eb",
-          color: "#fff",
-          border: "none",
-          padding: 14,
-          borderRadius: 8,
-          cursor: "pointer",
-          fontWeight: 600,
-          fontSize: 16,
-        }}
-      >
-        {loading
-          ? "Saving Invoice..."
-          : "Save Invoice"}
-      </button>
+      {children}
     </div>
   );
 }
