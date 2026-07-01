@@ -1,81 +1,33 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState } from "react";
 
-import { useWhatsapp } from "../../../hooks/useWhatsapp";
+import ChatList from "../components/ChatList";
+import ChatWindow from "../components/ChatWindow";
 
 export default function InboxPage() {
-  const {
-    messages,
-
-    loading,
-
-    loadMessages,
-  } = useWhatsapp();
-
-  useEffect(() => {
-    loadMessages("demo");
-  }, []);
+  const [selectedId, setSelectedId] =
+    useState("1");
 
   return (
     <div
       style={{
-        padding: 30,
+        display: "grid",
+        gridTemplateColumns: "340px 1fr",
+        gap: 20,
+        padding: 25,
+        background: "#f4f6f9",
+        minHeight: "100vh",
       }}
     >
-      <h1>
-        WhatsApp Inbox
-      </h1>
+      <ChatList
+        selectedId={selectedId}
+        onSelect={setSelectedId}
+      />
 
-      {loading && (
-        <p>
-          Loading...
-        </p>
-      )}
-
-      {!loading &&
-        messages.length ===
-          0 && (
-          <div>
-            No Messages Yet
-          </div>
-        )}
-
-      {messages.map(
-        (message) => (
-          <div
-            key={message.id}
-            style={{
-              padding: 15,
-
-              border:
-                "1px solid #ddd",
-
-              marginBottom: 12,
-
-              borderRadius: 8,
-            }}
-          >
-            <strong>
-              {
-                message.customer_name
-              }
-            </strong>
-
-            <div>
-              {
-                message.message
-              }
-            </div>
-
-            <small>
-              {
-                message.status
-              }
-            </small>
-          </div>
-        )
-      )}
+      <ChatWindow
+        customerId={selectedId}
+      />
     </div>
   );
 }

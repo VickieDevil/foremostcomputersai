@@ -1,26 +1,65 @@
 "use client";
 
 interface Props {
-  customerName: string;
-  phone: string;
+  customerId: string;
 }
 
 export default function CustomerInfo({
-  customerName,
-  phone,
+  customerId,
 }: Props) {
   return (
     <div
       style={{
-        padding: 20,
-        borderBottom:
-          "1px solid #ddd",
         background: "#fff",
+        border: "1px solid #ddd",
+        borderRadius: 10,
+        padding: 20,
+        height: "fit-content",
       }}
     >
-      <h3>{customerName}</h3>
+      <h2>Customer Info</h2>
 
-      <div>{phone}</div>
+      <hr />
+
+      <p>
+        <strong>ID:</strong>{" "}
+        {customerId}
+      </p>
+
+      <p>
+        <strong>Name:</strong>{" "}
+        Rahul Sharma
+      </p>
+
+      <p>
+        <strong>Mobile:</strong>{" "}
+        +91 9876543210
+      </p>
+
+      <p>
+        <strong>Status:</strong>{" "}
+        Active Customer
+      </p>
+
+      <p>
+        <strong>Last Visit:</strong>{" "}
+        Today
+      </p>
+
+      <button
+        style={{
+          width: "100%",
+          marginTop: 15,
+          padding: 10,
+          border: "none",
+          borderRadius: 8,
+          background: "#16a34a",
+          color: "#fff",
+          cursor: "pointer",
+        }}
+      >
+        Open CRM Profile
+      </button>
     </div>
   );
 }

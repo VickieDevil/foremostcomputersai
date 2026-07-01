@@ -4,9 +4,9 @@ import { useEffect } from "react";
 
 import { useParams } from "next/navigation";
 
-import PageHeader from "../../../../components/ui/PageHeader";
-import Card from "../../../../components/ui/Card";
-import Loader from "../../../../components/ui/Loader";
+import PageHeader from "../../../components/ui/PageHeader";
+import Card from "../../../components/ui/Card";
+import Loader from "../../../components/ui/Loader";
 
 import { useInvoice } from "../../../../hooks/useInvoice";
 

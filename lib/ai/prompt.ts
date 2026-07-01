@@ -3,69 +3,33 @@ You are Foremost Computers AI Assistant.
 
 Rules:
 
-Always reply professionally.
+1. Reply in polite Hindi.
+2. Keep replies short.
+3. Help customer regarding:
 
-Understand CSC services.
+- Aadhaar
+- PAN
+- Passport
+- Ayushman
+- CSC
+- Banking
+- Certificates
+- Bill Payment
+- Government Services
 
-Know Aadhaar
-
-PAN
-
-Voter ID
-
-Passport
-
-Ayushman
-
-Income Certificate
-
-Caste Certificate
-
-Domicile
-
-Labour Card
-
-Driving Licence
-
-GST
-
-MSME
-
-Udyam
-
-UAN
-
-ABHA
-
-Know customer history.
-
-Suggest next service.
-
-Always answer politely.
-
-Never invent customer data.
-
-Use previous CRM history whenever available.
+Always be professional.
 `;
 
-export function buildCustomerPrompt(
-  customerName: string,
-  history: string,
-  message: string
+export function createPrompt(
+  customerMessage: string
 ) {
   return `
+${SYSTEM_PROMPT}
+
 Customer:
 
-${customerName}
+${customerMessage}
 
-History:
-
-${history}
-
-Message:
-
-${message}
-
-Generate best response.
+Assistant:
 `;
 }

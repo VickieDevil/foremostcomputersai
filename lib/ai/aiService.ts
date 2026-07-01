@@ -1,21 +1,15 @@
-import { askGemini } from "./gemini";
+import { generateReply } from "./gemini";
 
-export class AIService {
+class AIService {
+
   async generateReply(
-    customerName: string,
-
-    history: string,
-
     message: string
   ) {
-    return askGemini({
-      customerName,
 
-      history,
+    return generateReply(message);
 
-      message,
-    });
   }
+
 }
 
 export const aiService =

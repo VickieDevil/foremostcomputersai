@@ -1,31 +1,85 @@
 "use client";
 
-import { WhatsappMessage } from "../../../types/whatsapp";
+import ChatHeader from "./ChatHeader";
 import MessageBubble from "./MessageBubble";
+import MessageComposer from "./MessageComposer";
+
+import { useMessages } from "../../../hooks/useMessages";
 
 interface Props {
-  messages: WhatsappMessage[];
+  customerId: string;
 }
 
 export default function ChatWindow({
-  messages,
+  customerId,
 }: Props) {
+  const {
+    messages,
+    addMessage,
+  } = useMessages();
+
+  async function handleSend(
+    text: string
+  ): Promise<void> {
+    addMessage("me", text);
+  }
+
   return (
     <div
       style={{
-        flex: 1,
-        background: "#f3f4f6",
-        padding: 20,
-        overflowY: "auto",
-        height: "70vh",
+        background: "#fff",
+        height: "80vh",
+        display: "flex",
+        flexDirection: "column",
+        borderRadius: 10,
+        border: "1px solid #ddd",
+        overflow: "hidden",
       }}
     >
-      {messages.map((msg) => (
-        <MessageBubble
-          key={msg.id}
-          message={msg}
-        />
-      ))}
+      <ChatHeader
+        customerName={`Customer #${customerId}`}
+        mobile="9876543210"
+        online
+      />
+
+      <div
+        style={{
+          flex: 1,
+          padding: 20,
+          overflowY: "auto",
+          background: "#f5f5f5",
+        }}
+      >
+        {messages.length === 0 && (
+          <div
+            style={{
+              textAlign: "center",
+              color: "#64748b",
+              marginTop: 40,
+            }}
+          >
+            No Messages Yet
+          </div>
+        )}
+
+        {messages.map((msg) => (
+          <MessageBubble
+            key={msg.id}
+            text={msg.text}
+            sender={msg.from}
+           time={new Date(
+  msg.createdAt ?? new Date().toISOString()
+).toLocaleTimeString([], {
+  hour: "2-digit",
+  minute: "2-digit",
+})}
+          />
+        ))}
+      </div>
+
+      <MessageComposer
+        onSend={handleSend}
+      />
     </div>
   );
 }

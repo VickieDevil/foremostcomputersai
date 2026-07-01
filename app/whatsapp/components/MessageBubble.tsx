@@ -1,48 +1,49 @@
 "use client";
 
-import { WhatsappMessage } from "../../../types/whatsapp";
-
 interface Props {
-  message: WhatsappMessage;
+  text: string;
+  sender: "me" | "customer";
+  time: string;
 }
 
 export default function MessageBubble({
-  message,
+  text,
+  sender,
+  time,
 }: Props) {
-  const isOutgoing =
-    message.direction === "outgoing";
+  const mine = sender === "me";
 
   return (
     <div
       style={{
         display: "flex",
-        justifyContent: isOutgoing
+        justifyContent: mine
           ? "flex-end"
           : "flex-start",
-        marginBottom: 12,
+        marginBottom: 14,
       }}
     >
       <div
         style={{
-          background: isOutgoing
-            ? "#DCF8C6"
-            : "#ffffff",
-          padding: 12,
+          maxWidth: 340,
+          background: mine ? "#dcf8c6" : "#ffffff",
+          padding: "10px 14px",
           borderRadius: 12,
-          maxWidth: "70%",
-          boxShadow:
-            "0 1px 4px rgba(0,0,0,.08)",
+          boxShadow: "0 1px 3px rgba(0,0,0,.08)",
         }}
       >
-        <div>{message.message}</div>
+        <div>{text}</div>
 
-        <small
+        <div
           style={{
+            fontSize: 11,
             color: "#64748b",
+            textAlign: "right",
+            marginTop: 6,
           }}
         >
-          {message.status}
-        </small>
+          {time}
+        </div>
       </div>
     </div>
   );

@@ -4,12 +4,12 @@ import { useEffect } from "react";
 
 import { useParams } from "next/navigation";
 
-import Card from "../../components/ui/Card";
-import PageHeader from "../../components/ui/PageHeader";
+import Card from "../../../components/ui/Card";
+import PageHeader from "../../../components/ui/PageHeader";
 
-import { useInvoice } from "../../../hooks/useInvoice";
+import { useInvoice } from "../../../../hooks/useInvoice";
 
-import InvoiceForm from "../components/InvoiceForm";
+import InvoiceForm from "../../components/InvoiceForm";
 
 export default function EditInvoicePage() {
   const params = useParams();
@@ -41,4 +41,38 @@ export default function EditInvoicePage() {
     );
   }
 
-  async function handleUpdate(data: any) {
+  async function handleUpdate(data: any) {  const ok = await updateInvoice(
+    invoiceId,
+    data
+  );
+
+  if (ok) {
+    alert("Invoice Updated Successfully");
+  } else {
+    alert("Unable to update invoice");
+  }
+}
+
+return (
+  <div
+    style={{
+      padding: 30,
+      background: "#f3f4f6",
+      minHeight: "100vh",
+    }}
+  >
+    <PageHeader
+      title="Edit Invoice"
+      subtitle={`Invoice No: ${invoice.invoice_no}`}
+    />
+
+    <Card>
+      <InvoiceForm
+        initialData={invoice}
+        onSubmit={handleUpdate}
+        loading={loading}
+      />
+    </Card>
+  </div>
+);
+}
