@@ -1,45 +1,32 @@
+export type CustomerStatus =
+  | "Active"
+  | "Pending"
+  | "Blocked";
+
 export interface Customer {
+
   id: string;
 
-  full_name: string;
+  name: string;
 
   mobile: string;
 
-  email: string;
+  email?: string | null;
 
-  address: string;
+  address?: string | null;
 
-  aadhaar: string;
+  aadhaar?: string | null;
 
-  pan: string;
+  pan?: string | null;
 
-  dob: string;
+  photo?: string | null;
 
-  gender: string;
+  status: CustomerStatus;
 
-  status: string;
+  tags: string[];
 
   created_at: string;
 
-  updated_at?: string;
-}
+  updated_at: string;
 
-export interface CustomerFormData {
-  full_name: string;
-
-  mobile: string;
-
-  email: string;
-
-  address: string;
-
-  aadhaar: string;
-
-  pan: string;
-
-  dob: string;
-
-  gender: string;
-
-  status: string;
 }

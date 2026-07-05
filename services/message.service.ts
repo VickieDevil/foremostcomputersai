@@ -1,20 +1,53 @@
+import {
+  whatsappService,
+} from "./whatsapp.service";
+
 export class MessageService {
+
   async send(
-    customerId: string,
+    contactId: string,
     message: string
-  ) {
-    console.log(
-      "Sending Message",
-      customerId,
-      message
-    );
+  ): Promise<boolean> {
 
-    await new Promise((r) =>
-      setTimeout(r, 500)
-    );
+    try {
 
-    return true;
+      return await whatsappService.sendMessage(
+        contactId,
+        message
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      return false;
+
+    }
+
   }
+
+  async receive(
+    contactId: string,
+    message: string
+  ): Promise<boolean> {
+
+    try {
+
+      return await whatsappService.receiveMessage(
+        contactId,
+        message
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      return false;
+
+    }
+
+  }
+
 }
 
 export const messageService =

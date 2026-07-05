@@ -6,7 +6,9 @@ import WhatsappStats from "./components/WhatsAppStats";
 import AIStatus from "./components/AIStatus";
 
 export default function WhatsAppDashboard() {
+
   return (
+
     <div
       style={{
         padding: 30,
@@ -14,6 +16,7 @@ export default function WhatsAppDashboard() {
         minHeight: "100vh",
       }}
     >
+
       <div
         style={{
           display: "flex",
@@ -22,40 +25,47 @@ export default function WhatsAppDashboard() {
           marginBottom: 30,
         }}
       >
+
         <div>
-          <h1
-            style={{
-              margin: 0,
-            }}
-          >
+
+          <h1>
+
             WhatsApp AI CRM
+
           </h1>
 
           <p
             style={{
               color: "#64748b",
-              marginTop: 8,
             }}
           >
-            Manage conversations, AI replies, templates and broadcasts
+
+            Live WhatsApp Business Dashboard
+
           </p>
+
         </div>
 
         <Link href="/whatsapp/inbox">
+
           <button
             style={{
               background: "#16a34a",
               color: "#fff",
               border: "none",
-              padding: "12px 20px",
+              padding: "12px 22px",
               borderRadius: 8,
               cursor: "pointer",
-              fontWeight: 600,
+              fontWeight: 700,
             }}
           >
-            Open Inbox
+
+            Open Live Inbox
+
           </button>
+
         </Link>
+
       </div>
 
       <WhatsappStats />
@@ -64,122 +74,124 @@ export default function WhatsAppDashboard() {
         style={{
           marginTop: 30,
           display: "grid",
-          gridTemplateColumns: "2fr 1fr",
+          gridTemplateColumns:
+            "2fr 1fr",
           gap: 24,
         }}
       >
-        <RecentChats />
+
+        <RecentSection />
 
         <AIStatus />
+
       </div>
 
       <QuickActions />
+
     </div>
+
   );
+
 }
 
-function RecentChats() {
-  const chats = [
-    {
-      name: "Rahul Sharma",
-      msg: "PAN Card banwana hai.",
-      time: "10:25 AM",
-    },
-    {
-      name: "Anjali Verma",
-      msg: "Passport document upload",
-      time: "11:02 AM",
-    },
-    {
-      name: "Deepak Kumar",
-      msg: "Aadhaar correction",
-      time: "11:48 AM",
-    },
-    {
-      name: "Pooja Singh",
-      msg: "Income Certificate",
-      time: "12:20 PM",
-    },
-  ];
+function RecentSection() {
 
   return (
+
     <div
       style={{
         background: "#fff",
         borderRadius: 12,
         padding: 24,
-        boxShadow: "0 2px 10px rgba(0,0,0,.08)",
       }}
     >
-      <h3>Recent Conversations</h3>
 
-      <div
+      <h3>
+
+        Live WhatsApp Inbox
+
+      </h3>
+
+      <p
         style={{
-          marginTop: 20,
+          color: "#64748b",
+          marginTop: 15,
         }}
       >
-        {chats.map((chat) => (
-          <div
-            key={chat.name}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              padding: "14px 0",
-              borderBottom: "1px solid #eee",
-            }}
-          >
-            <div>
-              <strong>{chat.name}</strong>
 
-              <div
-                style={{
-                  color: "#64748b",
-                  marginTop: 5,
-                }}
-              >
-                {chat.msg}
-              </div>
-            </div>
+        Contacts now come directly from Supabase.
 
-            <small>{chat.time}</small>
-          </div>
-        ))}
-      </div>
+      </p>
+
+      <Link href="/whatsapp/inbox">
+
+        <button
+          style={{
+            marginTop: 20,
+            background: "#2563eb",
+            color: "#fff",
+            border: "none",
+            padding: "12px 18px",
+            borderRadius: 8,
+            cursor: "pointer",
+          }}
+        >
+
+          Open Inbox
+
+        </button>
+
+      </Link>
+
     </div>
+
   );
+
 }
 
 function QuickActions() {
+
   const actions = [
+
     {
       title: "Inbox",
       href: "/whatsapp/inbox",
       color: "#2563eb",
     },
+
     {
       title: "Templates",
       href: "/whatsapp/templates",
       color: "#16a34a",
     },
+
     {
       title: "Broadcast",
       href: "/whatsapp/broadcast",
       color: "#dc2626",
     },
+
     {
       title: "Settings",
       href: "/whatsapp/settings",
       color: "#7c3aed",
     },
+
   ];
 
   return (
+
     <div
       style={{
         marginTop: 30,
       }}
     >
-      <h3>Quick Actions</h3>
+
+      <h3>
+
+        Quick Actions
+
+      </h3>
 
       <div
         style={{
@@ -187,10 +199,12 @@ function QuickActions() {
           gridTemplateColumns:
             "repeat(auto-fit,minmax(220px,1fr))",
           gap: 20,
-          marginTop: 15,
+          marginTop: 20,
         }}
       >
+
         {actions.map((item) => (
+
           <Link
             key={item.title}
             href={item.href}
@@ -198,21 +212,30 @@ function QuickActions() {
               textDecoration: "none",
             }}
           >
+
             <div
               style={{
                 background: item.color,
                 color: "#fff",
                 padding: 24,
                 borderRadius: 12,
-                fontWeight: 700,
                 textAlign: "center",
+                fontWeight: 700,
               }}
             >
+
               {item.title}
+
             </div>
+
           </Link>
+
         ))}
+
       </div>
+
     </div>
+
   );
+
 }

@@ -1,10 +1,12 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+
 import ChatHeader from "./ChatHeader";
 import MessageBubble from "./MessageBubble";
 import MessageComposer from "./MessageComposer";
 
-import { useMessages } from "../../../hooks/useMessages";
+import { useMessages } from "@/hooks/useMessages";
 
 interface Props {
   customerId: string;
@@ -13,18 +15,27 @@ interface Props {
 export default function ChatWindow({
   customerId,
 }: Props) {
+
   const {
     messages,
-    addMessage,
-  } = useMessages();
+    loading,
+    sending,
+    send,
+  } = useMessages(customerId);
 
-  async function handleSend(
-    text: string
-  ): Promise<void> {
-    addMessage("me", text);
-  }
+  const bottomRef =
+    useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+
+    bottomRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+
+  }, [messages]);
 
   return (
+
     <div
       style={{
         background: "#fff",
@@ -32,54 +43,76 @@ export default function ChatWindow({
         display: "flex",
         flexDirection: "column",
         borderRadius: 10,
-        border: "1px solid #ddd",
         overflow: "hidden",
+        border: "1px solid #ddd",
       }}
     >
+
       <ChatHeader
-        customerName={`Customer #${customerId}`}
-        mobile="9876543210"
+        customerName={`Customer ${customerId}`}
+        mobile=""
         online
       />
 
       <div
         style={{
           flex: 1,
-          padding: 20,
           overflowY: "auto",
+          padding: 20,
           background: "#f5f5f5",
         }}
       >
-        {messages.length === 0 && (
-          <div
-            style={{
-              textAlign: "center",
-              color: "#64748b",
-              marginTop: 40,
-            }}
-          >
-            No Messages Yet
-          </div>
-        )}
+
+        {loading &&
+
+          <p>Loading...</p>
+
+        }
+
+        {!loading &&
+          messages.length === 0 && (
+
+            <p>No Messages</p>
+
+          )}
 
         {messages.map((msg) => (
+
           <MessageBubble
+
             key={msg.id}
-            text={msg.text}
-            sender={msg.from}
-           time={new Date(
-  msg.createdAt ?? new Date().toISOString()
-).toLocaleTimeString([], {
-  hour: "2-digit",
-  minute: "2-digit",
-})}
+
+            text={msg.message}
+
+            sender={
+              msg.direction ===
+              "incoming"
+                ? "customer"
+                : "me"
+            }
+
+            time={
+              new Date(
+                msg.created_at
+              ).toLocaleTimeString()
+            }
+
           />
+
         ))}
+
+        <div ref={bottomRef} />
+
       </div>
 
       <MessageComposer
-        onSend={handleSend}
+
+        onSend={send}
+
       />
+
     </div>
+
   );
+
 }

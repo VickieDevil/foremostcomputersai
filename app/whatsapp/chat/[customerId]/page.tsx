@@ -8,7 +8,7 @@ import AIReplyBox from "../../components/AIReplyBox";
 
 import { useState } from "react";
 
-import { aiService } from "../../../../lib/ai/aiService";
+import { aiService } from "@/lib/ai/aiService";
 
 export default function WhatsappChatPage() {
 
@@ -27,22 +27,20 @@ export default function WhatsappChatPage() {
 
     setLoadingAI(true);
 
-    const result =
-      await aiService.generateReply(
-        "Customer asked about PAN Card."
-      );
+    try {
 
-    setReply(result);
+      const result =
+        await aiService.generateReply(
+          "Customer asked about PAN Card."
+        );
 
-    setLoadingAI(false);
+      setReply(result);
 
-  }
+    } finally {
 
-  function applyReply() {
+      setLoadingAI(false);
 
-    alert(
-      "Next Batch me AI reply automatically message box me fill hoga."
-    );
+    }
 
   }
 
@@ -55,8 +53,6 @@ export default function WhatsappChatPage() {
           "300px 1fr 350px",
         gap: 20,
         padding: 20,
-        background: "#f3f4f6",
-        minHeight: "100vh",
       }}
     >
 
@@ -72,7 +68,7 @@ export default function WhatsappChatPage() {
         reply={reply}
         loading={loadingAI}
         onGenerate={generateAI}
-        onApply={applyReply}
+        onApply={() => {}}
       />
 
     </div>

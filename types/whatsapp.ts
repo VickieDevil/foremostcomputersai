@@ -1,77 +1,92 @@
-export type MessageType =
-  | "text"
-  | "image"
-  | "document"
-  | "audio"
-  | "video"
-  | "location"
-  | "template";
-
 export type MessageDirection =
   | "incoming"
   | "outgoing";
 
 export type MessageStatus =
-  | "sending"
   | "sent"
   | "delivered"
-  | "read"
-  | "failed";
+  | "read";
 
-export interface WhatsappMessage {
-  id?: string;
+export interface WhatsappContact {
+  id: string;
 
-  customer_id: string;
-
-  phone_number: string;
-
-  customer_name?: string;
-
-  message: string;
-
-  message_type: MessageType;
-
-  direction: MessageDirection;
-
-  status: MessageStatus;
-
-  media_url?: string;
-
-  media_name?: string;
-
-  ai_generated?: boolean;
-
-  template_name?: string;
-
-  created_at?: string;
-
-  updated_at?: string;
-}
-
-export interface ChatSession {
-  customer_id: string;
-
-  customer_name: string;
-
-  phone_number: string;
-
-  last_message: string;
-
-  unread_count: number;
-
-  last_message_time?: string;
-}
-
-export interface WhatsappTemplate {
-  id?: string;
+  customer_id: string | null;
 
   name: string;
 
-  category: string;
+  mobile: string;
 
-  language: string;
+  country_code: string;
 
-  body: string;
+  profile_photo?: string | null;
 
-  variables?: string[];
+  about?: string | null;
+
+  last_seen?: string | null;
+
+  is_business: boolean;
+
+  is_blocked: boolean;
+
+  created_at: string;
+
+  updated_at: string;
+}
+
+export interface WhatsappMessage {
+  id: string;
+
+  contact_id: string;
+
+  meta_message_id?: string | null;
+
+  message_type: string;
+
+  direction: MessageDirection;
+
+  sender: string;
+
+  message: string;
+
+  media_url?: string | null;
+
+  caption?: string | null;
+
+  status: MessageStatus;
+
+  reply_to?: string | null;
+
+  is_starred: boolean;
+
+  is_deleted: boolean;
+
+  delivered_at?: string | null;
+
+  read_at?: string | null;
+
+  created_at: string;
+}
+
+/* ===========================
+   Chat List View
+=========================== */
+
+export interface WhatsappChatList {
+
+  id: string;
+
+  name: string;
+
+  mobile: string;
+
+  country_code: string;
+
+  is_blocked: boolean;
+
+  last_message: string | null;
+
+  last_message_time: string | null;
+
+  total_messages: number;
+
 }

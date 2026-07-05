@@ -3,30 +3,53 @@
 import { useState } from "react";
 
 interface Props {
-  onSend: (message: string) => Promise<void>;
+
+  onSend: (
+    message: string
+  ) => Promise<void>;
+
 }
 
 export default function MessageComposer({
+
   onSend,
+
 }: Props) {
-  const [message, setMessage] = useState("");
-  const [sending, setSending] = useState(false);
+
+  const [message, setMessage] =
+    useState("");
+
+  const [sending, setSending] =
+    useState(false);
 
   async function send() {
+
     if (!message.trim()) return;
 
     try {
+
       setSending(true);
 
-      await onSend(message);
+      await onSend(message.trim());
 
       setMessage("");
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert("Message send failed.");
+
     } finally {
+
       setSending(false);
+
     }
+
   }
 
   return (
+
     <div
       style={{
         display: "flex",
@@ -36,29 +59,54 @@ export default function MessageComposer({
         background: "#fff",
       }}
     >
+
       <input
+
         value={message}
+
         onChange={(e) =>
-          setMessage(e.target.value)
+          setMessage(
+            e.target.value
+          )
         }
+
         placeholder="Type message..."
+
         disabled={sending}
+
         onKeyDown={(e) => {
-          if (e.key === "Enter") {
+
+          if (
+            e.key === "Enter" &&
+            !e.shiftKey
+          ) {
+
+            e.preventDefault();
+
             send();
+
           }
+
         }}
+
         style={{
           flex: 1,
           padding: 12,
           borderRadius: 8,
           border: "1px solid #ddd",
         }}
+
       />
 
       <button
-        disabled={sending}
+
         onClick={send}
+
+        disabled={
+          sending ||
+          !message.trim()
+        }
+
         style={{
           background: "#16a34a",
           color: "#fff",
@@ -66,11 +114,23 @@ export default function MessageComposer({
           padding: "12px 18px",
           borderRadius: 8,
           cursor: "pointer",
-          opacity: sending ? 0.6 : 1,
+          opacity:
+            sending ||
+            !message.trim()
+              ? 0.6
+              : 1,
         }}
+
       >
-        {sending ? "Sending..." : "Send"}
+
+        {sending
+          ? "Sending..."
+          : "Send"}
+
       </button>
+
     </div>
+
   );
+
 }
