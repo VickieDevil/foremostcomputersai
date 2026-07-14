@@ -1,15 +1,29 @@
-export const STATUS = {
+export const CUSTOMER_STATUS = {
 
-  ACTIVE: "active",
+  ACTIVE: "Active",
 
-  INACTIVE: "inactive",
+  PENDING: "Pending",
 
-  PENDING: "pending",
+  BLOCKED: "Blocked",
 
-  COMPLETED: "completed",
+} as const;
 
-  FAILED: "failed",
+export const MESSAGE_STATUS = {
 
-  DELETED: "deleted",
+  SENT: "sent",
+
+  DELIVERED: "delivered",
+
+  READ: "read",
+
+} as const;
+
+export const DOCUMENT_STATUS = {
+
+  PENDING: "Pending",
+
+  VERIFIED: "Verified",
+
+  REJECTED: "Rejected",
 
 } as const;

@@ -7,7 +7,11 @@ export interface Customer {
 
   id: string;
 
-  name: string;
+  // Database Column
+  full_name?: string | null;
+
+  // Temporary Compatibility
+  name?: string | null;
 
   mobile: string;
 
@@ -19,14 +23,18 @@ export interface Customer {
 
   pan?: string | null;
 
+  dob?: string | null;
+
+  gender?: string | null;
+
+  status?: CustomerStatus | null;
+
   photo?: string | null;
 
-  status: CustomerStatus;
-
-  tags: string[];
+  tags?: string[];
 
   created_at: string;
 
-  updated_at: string;
+  updated_at?: string;
 
 }

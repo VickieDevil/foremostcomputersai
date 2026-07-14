@@ -15,6 +15,7 @@ import CustomerDocuments from "./components/CustomerDocuments";
 import TimelineCard from "./components/TimelineCard";
 import CustomerAISummary from "./components/CustomerAISummary";
 import CustomerServices from "./components/CustomerServices";
+import CustomerBilling from "./components/CustomerBilling";
 
 export default function ViewCustomerPage() {
   const params = useParams();
@@ -95,7 +96,9 @@ export default function ViewCustomerPage() {
       <CustomerServices
         customerId={customer.id}
       />
-
+<CustomerBilling
+  customerId={customer.id}
+/>
       <CustomerActivities
         customerId={customer.id}
       />

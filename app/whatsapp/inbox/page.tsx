@@ -30,39 +30,32 @@ export default function InboxPage() {
     setLoading,
   ] = useState(true);
 
-  async function loadContacts() {
+ async function loadContacts() {
+  setLoading(true);
 
-    setLoading(true);
+  try {
+    const response =
+      await whatsappService.getContacts();
 
-    try {
+    const contacts =
+      response.data ?? [];
 
-      const data =
-        await whatsappService.getContacts();
+    setContacts(contacts);
 
-      setContacts(data);
-
-      if (
-        data.length > 0 &&
-        !selectedId
-      ) {
-        setSelectedId(
-          data[0].id
-        );
-      }
-
-    } catch (err) {
-
-      console.error(
-        err
+    if (
+      contacts.length > 0 &&
+      !selectedId
+    ) {
+      setSelectedId(
+        contacts[0].id
       );
-
-    } finally {
-
-      setLoading(false);
-
     }
-
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setLoading(false);
   }
+}
 
   useEffect(() => {
 

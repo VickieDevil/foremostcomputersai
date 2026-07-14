@@ -1,17 +1,21 @@
 import { create } from "zustand";
 
-import { persist }
-  from "zustand/middleware";
+import { persist } from "zustand/middleware";
 
-import { Customer }
-  from "@/types/customer";
+import { Customer } from "@/types/customer";
 
 interface CustomerState {
 
   customers: Customer[];
 
+  customer: Customer | null;
+
   setCustomers: (
     customers: Customer[]
+  ) => void;
+
+  setCustomer: (
+    customer: Customer | null
   ) => void;
 
   clear: () => void;
@@ -19,32 +23,39 @@ interface CustomerState {
 }
 
 export const useCustomerStore =
-  create<CustomerState>()(
+create<CustomerState>()(
 
-    persist(
+persist(
 
-      (set) => ({
+(set)=>({
 
-        customers: [],
+customers:[],
 
-        setCustomers:
-          (customers) =>
-            set({
-              customers,
-            }),
+customer:null,
 
-        clear: () =>
-          set({
-            customers: [],
-          }),
+setCustomers:(customers)=>
+set({customers}),
 
-      }),
+setCustomer:(customer)=>
+set({customer}),
 
-      {
-        name:
-          "foremost-customers",
-      }
+clear:()=>
+set({
 
-    )
+customers:[],
 
-  );
+customer:null,
+
+}),
+
+}),
+
+{
+
+name:"foremost-customers",
+
+}
+
+)
+
+);

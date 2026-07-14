@@ -1,7 +1,7 @@
 "use client";
 
 interface CustomerAvatarProps {
-  name: string;
+  name?: string | null;
   image?: string | null;
   size?: number;
 }
@@ -11,18 +11,25 @@ export default function CustomerAvatar({
   image,
   size = 52,
 }: CustomerAvatarProps) {
-  const initials = name
-    .split(" ")
-    .map((item) => item[0])
-    .join("")
-    .substring(0, 2)
-    .toUpperCase();
+
+  const safeName = (name ?? "").trim();
+
+  const initials =
+    safeName.length > 0
+      ? safeName
+          .split(" ")
+          .filter(Boolean)
+          .map((x) => x[0])
+          .join("")
+          .substring(0, 2)
+          .toUpperCase()
+      : "?";
 
   if (image) {
     return (
       <img
         src={image}
-        alt={name}
+        alt={safeName || "Customer"}
         style={{
           width: size,
           height: size,
@@ -42,8 +49,8 @@ export default function CustomerAvatar({
         background: "#2563eb",
         color: "#fff",
         display: "flex",
-        alignItems: "center",
         justifyContent: "center",
+        alignItems: "center",
         fontWeight: 700,
         fontSize: 18,
       }}

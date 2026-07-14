@@ -3,52 +3,102 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useDocument } from "../../../../hooks/useDocument";
+import { DocumentFormData } from "../../../../types/document";
 
 export default function UploadDocumentPage() {
-  const { customerId } = useParams();
 
-  const { uploadDocument, loading } = useDocument();
+  const params = useParams();
 
-  const [documentName, setDocumentName] = useState("");
-  const [documentType, setDocumentType] = useState("");
-  const [remarks, setRemarks] = useState("");
-  const [file, setFile] = useState<File | null>(null);
+  const customerId =
+    params.customerId as string;
+
+  const {
+    uploadDocument,
+    loading,
+  } = useDocument(customerId);
+
+  const [
+    documentName,
+    setDocumentName,
+  ] = useState("");
+
+  const [
+    documentType,
+    setDocumentType,
+  ] = useState("");
+
+  const [
+    remarks,
+    setRemarks,
+  ] = useState("");
+
+  const [
+    file,
+    setFile,
+  ] =
+    useState<File | null>(null);
 
   async function handleSubmit(
     e: React.FormEvent<HTMLFormElement>
   ) {
+
     e.preventDefault();
 
     if (!file) {
+
       alert("Please Select File");
+
       return;
+
     }
 
-    const ok = await uploadDocument(
-      customerId as string,
+    const form: DocumentFormData = {
+
+      customer_id: customerId,
+
+      title: documentName,
+
+      document_type: documentType,
+
+      remarks,
+
       file,
-      documentName,
-      documentType,
-      remarks
-    );
+
+    };
+
+    const ok =
+      await uploadDocument(form);
 
     if (ok) {
+
       setDocumentName("");
+
       setDocumentType("");
+
       setRemarks("");
+
       setFile(null);
+
     }
+
   }
 
   const inputStyle = {
+
     width: "100%",
+
     padding: 12,
+
     marginBottom: 15,
+
     borderRadius: 8,
+
     border: "1px solid #ccc",
+
   };
 
   return (
+
     <div
       style={{
         maxWidth: 700,
@@ -58,18 +108,36 @@ export default function UploadDocumentPage() {
         borderRadius: 10,
       }}
     >
-      <h2>Upload Document</h2>
+
+      <h2>
+
+        Upload Document
+
+      </h2>
 
       <p>
-        <b>Customer ID:</b> {customerId}
+
+        <b>Customer ID :</b>
+
+        {" "}
+
+        {customerId}
+
       </p>
 
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={handleSubmit}
+      >
+
         <input
           style={inputStyle}
           placeholder="Document Name"
           value={documentName}
-          onChange={(e) => setDocumentName(e.target.value)}
+          onChange={(e) =>
+            setDocumentName(
+              e.target.value
+            )
+          }
           required
         />
 
@@ -77,7 +145,11 @@ export default function UploadDocumentPage() {
           style={inputStyle}
           placeholder="Document Type"
           value={documentType}
-          onChange={(e) => setDocumentType(e.target.value)}
+          onChange={(e) =>
+            setDocumentType(
+              e.target.value
+            )
+          }
           required
         />
 
@@ -85,18 +157,26 @@ export default function UploadDocumentPage() {
           style={inputStyle}
           placeholder="Remarks"
           value={remarks}
-          onChange={(e) => setRemarks(e.target.value)}
+          onChange={(e) =>
+            setRemarks(
+              e.target.value
+            )
+          }
         />
 
         <input
           type="file"
-          onChange={(e) =>
-            setFile(e.target.files?.[0] || null)
-          }
           required
+          onChange={(e) =>
+            setFile(
+              e.target.files?.[0] ??
+                null
+            )
+          }
         />
 
         <br />
+
         <br />
 
         <button
@@ -111,9 +191,17 @@ export default function UploadDocumentPage() {
             cursor: "pointer",
           }}
         >
-          {loading ? "Uploading..." : "Upload Document"}
+
+          {loading
+            ? "Uploading..."
+            : "Upload Document"}
+
         </button>
+
       </form>
+
     </div>
+
   );
+
 }

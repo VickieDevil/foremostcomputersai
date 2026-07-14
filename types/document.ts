@@ -1,5 +1,5 @@
 export interface Document {
-  id?: string;
+  id: string;
 
   customer_id: string;
 
@@ -11,17 +11,17 @@ export interface Document {
 
   file_url: string;
 
-  file_size?: number;
+  file_size: number | null;
 
-  mime_type?: string;
+  mime_type: string | null;
 
-  uploaded_by?: string;
+  uploaded_by: string | null;
 
-  remarks?: string;
+  remarks: string | null;
 
-  created_at?: string;
+  created_at: string;
 
-  updated_at?: string;
+  updated_at: string | null;
 }
 
 export interface DocumentFormData {

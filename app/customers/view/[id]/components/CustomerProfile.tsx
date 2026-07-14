@@ -1,9 +1,10 @@
 "use client";
 
 import React from "react";
+import { Customer } from "@/types/customer";
 
 interface CustomerProfileProps {
-  customer: any;
+  customer: Customer;
 }
 
 const cardStyle: React.CSSProperties = {
@@ -30,8 +31,19 @@ const valueStyle: React.CSSProperties = {
 export default function CustomerProfile({
   customer,
 }: CustomerProfileProps) {
+
+  const fullName =
+    customer.full_name ??
+    customer.name ??
+    "Unknown Customer";
+
+  const status =
+    customer.status ??
+    "Pending";
+
   return (
     <div style={cardStyle}>
+
       {/* ================= Header ================= */}
 
       <div
@@ -42,6 +54,7 @@ export default function CustomerProfile({
           flexWrap: "wrap",
         }}
       >
+
         <div
           style={{
             width: 110,
@@ -56,12 +69,11 @@ export default function CustomerProfile({
             fontWeight: 700,
           }}
         >
-          {(customer.full_name || "?")
-            .charAt(0)
-            .toUpperCase()}
+          {fullName.charAt(0).toUpperCase()}
         </div>
 
         <div style={{ flex: 1 }}>
+
           <h2
             style={{
               margin: 0,
@@ -69,7 +81,7 @@ export default function CustomerProfile({
               color: "#111827",
             }}
           >
-            {customer.full_name}
+            {fullName}
           </h2>
 
           <p
@@ -88,20 +100,29 @@ export default function CustomerProfile({
               display: "inline-block",
               padding: "8px 18px",
               borderRadius: 30,
+
               background:
-                customer.status === "Active"
+                status === "Active"
                   ? "#dcfce7"
+                  : status === "Pending"
+                  ? "#fef3c7"
                   : "#fee2e2",
+
               color:
-                customer.status === "Active"
+                status === "Active"
                   ? "#166534"
+                  : status === "Pending"
+                  ? "#92400e"
                   : "#991b1b",
+
               fontWeight: 700,
             }}
           >
-            {customer.status}
+            {status}
           </div>
+
         </div>
+
       </div>
 
       <hr
@@ -129,57 +150,74 @@ export default function CustomerProfile({
           gap: 20,
         }}
       >
+
         <div>
-          <div style={labelStyle}>Full Name</div>
+          <div style={labelStyle}>
+            Full Name
+          </div>
 
           <div style={valueStyle}>
-            {customer.full_name || "-"}
+            {fullName}
           </div>
         </div>
 
         <div>
-          <div style={labelStyle}>Mobile Number</div>
+          <div style={labelStyle}>
+            Mobile Number
+          </div>
 
           <div style={valueStyle}>
-            {customer.mobile || "-"}
+            {customer.mobile ?? "-"}
           </div>
         </div>
 
         <div>
-          <div style={labelStyle}>Email</div>
+          <div style={labelStyle}>
+            Email
+          </div>
 
           <div style={valueStyle}>
-            {customer.email || "-"}
+            {customer.email ?? "-"}
           </div>
         </div>
 
         <div>
-          <div style={labelStyle}>Gender</div>
+          <div style={labelStyle}>
+            Gender
+          </div>
 
           <div style={valueStyle}>
-            {customer.gender || "-"}
+            {customer.gender ?? "-"}
           </div>
         </div>
 
         <div>
-          <div style={labelStyle}>Date of Birth</div>
+          <div style={labelStyle}>
+            Date of Birth
+          </div>
 
           <div style={valueStyle}>
-            {customer.dob || "-"}
+            {customer.dob ?? "-"}
           </div>
         </div>
 
         <div>
-          <div style={labelStyle}>Aadhaar Number</div>
-
-          <div style={valueStyle}>
-            {customer.aadhaar || "-"}
+          <div style={labelStyle}>
+            Aadhaar Number
           </div>
-        </div>        <div>
-          <div style={labelStyle}>PAN Number</div>
 
           <div style={valueStyle}>
-            {customer.pan || "-"}
+            {customer.aadhaar ?? "-"}
+          </div>
+        </div>
+
+        <div>
+          <div style={labelStyle}>
+            PAN Number
+          </div>
+
+          <div style={valueStyle}>
+            {customer.pan ?? "-"}
           </div>
         </div>
 
@@ -188,12 +226,15 @@ export default function CustomerProfile({
             gridColumn: "1 / -1",
           }}
         >
-          <div style={labelStyle}>Address</div>
+          <div style={labelStyle}>
+            Address
+          </div>
 
           <div style={valueStyle}>
-            {customer.address || "-"}
+            {customer.address ?? "-"}
           </div>
         </div>
+
       </div>
 
       <hr
@@ -202,9 +243,7 @@ export default function CustomerProfile({
         }}
       />
 
-      {/* ================= Extra Information ================= */}
-
-      <h3
+      {/* ================= Extra Information ================= */}      <h3
         style={{
           marginBottom: 20,
           color: "#1e293b",
@@ -221,61 +260,85 @@ export default function CustomerProfile({
           gap: 20,
         }}
       >
+
         <div>
-          <div style={labelStyle}>Customer Since</div>
+          <div style={labelStyle}>
+            Customer Since
+          </div>
 
           <div style={valueStyle}>
             {customer.created_at
               ? new Date(
                   customer.created_at
-                ).toLocaleDateString()
+                ).toLocaleDateString(
+                  "en-IN"
+                )
               : "-"}
           </div>
         </div>
 
         <div>
-          <div style={labelStyle}>Last Updated</div>
+          <div style={labelStyle}>
+            Last Updated
+          </div>
 
           <div style={valueStyle}>
             {customer.updated_at
               ? new Date(
                   customer.updated_at
-                ).toLocaleDateString()
+                ).toLocaleDateString(
+                  "en-IN"
+                )
+              : customer.created_at
+              ? new Date(
+                  customer.created_at
+                ).toLocaleDateString(
+                  "en-IN"
+                )
               : "-"}
           </div>
         </div>
 
         <div>
-          <div style={labelStyle}>Current Status</div>
+          <div style={labelStyle}>
+            Current Status
+          </div>
 
           <div style={valueStyle}>
-            {customer.status}
+            {status}
           </div>
         </div>
 
         <div>
-          <div style={labelStyle}>Customer Type</div>
+          <div style={labelStyle}>
+            Customer Type
+          </div>
 
           <div style={valueStyle}>
-            Regular Customer
+            {customer.tags?.includes("VIP")
+              ? "VIP Customer"
+              : "Regular Customer"}
           </div>
         </div>
+
       </div>
 
       <div
         style={{
           marginTop: 35,
-          padding: 18,
-          borderRadius: 10,
+          padding: 20,
+          borderRadius: 12,
           background: "#eff6ff",
           border: "1px solid #bfdbfe",
         }}
       >
+
         <div
           style={{
             fontWeight: 700,
-            marginBottom: 8,
-            color: "#1e40af",
+            fontSize: 18,
+            color: "#1d4ed8",
+            marginBottom: 12,
           }}
         >
           Customer Summary
@@ -283,19 +346,73 @@ export default function CustomerProfile({
 
         <div
           style={{
+            lineHeight: 1.8,
             color: "#334155",
-            lineHeight: 1.7,
           }}
         >
-          This customer profile contains all basic
-          personal information, identity documents,
-          account status and future service history.
-          Additional modules like WhatsApp Chat,
-          AI Insights, Billing, Activity Timeline,
-          Certificates, Payments and CSC Services
-          will be integrated into this dashboard.
+          <strong>{fullName}</strong>
+          {" "}
+          is currently registered as
+          {" "}
+          <strong>{status}</strong>.
+
+          <br />
+          <br />
+
+          Contact Number :
+          {" "}
+          {customer.mobile ?? "-"}
+
+          <br />
+
+          Email :
+          {" "}
+          {customer.email ?? "-"}
+
+          <br />
+
+          Aadhaar :
+          {" "}
+          {customer.aadhaar ?? "-"}
+
+          <br />
+
+          PAN :
+          {" "}
+          {customer.pan ?? "-"}
+
+          <br />
+
+          Registered On :
+          {" "}
+          {customer.created_at
+            ? new Date(
+                customer.created_at
+              ).toLocaleDateString(
+                "en-IN"
+              )
+            : "-"}
+
+          <br />
+          <br />
+
+          Future modules including
+          Documents,
+          Billing,
+          Activities,
+          CSC Services,
+          WhatsApp CRM,
+          AI Insights,
+          Payments,
+          Certificates
+          and
+          Customer Analytics
+          will appear here automatically.
+
         </div>
+
       </div>
+
     </div>
   );
 }

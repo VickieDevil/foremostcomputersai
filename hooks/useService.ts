@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+
 import { ServiceService } from "../services/service.service";
+
 import {
   Service,
   ServiceFormData,
@@ -35,126 +37,145 @@ export function useService(
   const [services, setServices] =
     useState<Service[]>([]);
 
+  const [stats, setStats] =
+    useState(defaultStats);
+
   const [loading, setLoading] =
     useState(false);
 
-  const [stats, setStats] =
-    useState<ServiceStats>(defaultStats);
+  const loadServices =
+    useCallback(async () => {
+      try {
+        setLoading(true);
 
-  async function loadServices() {
-    try {
-      setLoading(true);
+        const data = customerId
+          ? await ServiceService.getCustomerServices(
+              customerId
+            )
+          : await ServiceService.getServices();
 
-      const data = customerId
-        ? await ServiceService.getCustomerServices(
-            customerId
-          )
-        : await ServiceService.getServices();
+        setServices(data ?? []);
+      } catch (error) {
+        console.error(error);
+        setServices([]);
+      } finally {
+        setLoading(false);
+      }
+    }, [customerId]);
 
-      setServices(data || []);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  }
+  const loadStats =
+    useCallback(async () => {
+      try {
+        const result =
+          await ServiceService.getServiceStats();
 
-  async function loadStats() {
-    try {
-      const result =
-        await ServiceService.getServiceStats();
+        setStats(result ?? defaultStats);
+      } catch (error) {
+        console.error(error);
 
-      setStats(result);
-    } catch (error) {
-      console.error(error);
-    }
-  }
+        setStats(defaultStats);
+      }
+    }, []);
 
-  async function addService(
-    service: ServiceFormData
-  ): Promise<boolean> {
-    try {
-      setLoading(true);
+  const addService =
+    useCallback(
+      async (
+        service: ServiceFormData
+      ): Promise<boolean> => {
+        try {
+          setLoading(true);
 
-      await ServiceService.createService(
-        service
-      );
+          await ServiceService.createService(
+            service
+          );
 
-      await Promise.all([
-        loadServices(),
-        loadStats(),
-      ]);
+          await Promise.all([
+            loadServices(),
+            loadStats(),
+          ]);
 
-      return true;
-    } catch (error) {
-      console.error(error);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  }
+          return true;
+        } catch (error) {
+          console.error(error);
+          return false;
+        } finally {
+          setLoading(false);
+        }
+      },
+      [loadServices, loadStats]
+    );
 
-  async function updateService(
-    id: string,
-    service: Partial<ServiceFormData>
-  ): Promise<boolean> {
-    try {
-      setLoading(true);
+  const updateService =
+    useCallback(
+      async (
+        id: string,
+        service: Partial<ServiceFormData>
+      ): Promise<boolean> => {
+        try {
+          setLoading(true);
 
-      await ServiceService.updateService(
-        id,
-        service
-      );
+          await ServiceService.updateService(
+            id,
+            service
+          );
 
-      await Promise.all([
-        loadServices(),
-        loadStats(),
-      ]);
+          await Promise.all([
+            loadServices(),
+            loadStats(),
+          ]);
 
-      return true;
-    } catch (error) {
-      console.error(error);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  }
+          return true;
+        } catch (error) {
+          console.error(error);
+          return false;
+        } finally {
+          setLoading(false);
+        }
+      },
+      [loadServices, loadStats]
+    );
 
-  async function deleteService(
-    id: string
-  ): Promise<boolean> {
-    try {
-      setLoading(true);
+  const deleteService =
+    useCallback(
+      async (
+        id: string
+      ): Promise<boolean> => {
+        try {
+          setLoading(true);
 
-      await ServiceService.deleteService(
-        id
-      );
+          await ServiceService.deleteService(
+            id
+          );
 
-      await Promise.all([
-        loadServices(),
-        loadStats(),
-      ]);
+          await Promise.all([
+            loadServices(),
+            loadStats(),
+          ]);
 
-      return true;
-    } catch (error) {
-      console.error(error);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  }
+          return true;
+        } catch (error) {
+          console.error(error);
+          return false;
+        } finally {
+          setLoading(false);
+        }
+      },
+      [loadServices, loadStats]
+    );
 
   useEffect(() => {
     loadServices();
     loadStats();
-  }, [customerId]);
+  }, [loadServices, loadStats]);
 
   return {
     services,
-    loading,
     stats,
+    loading,
+
     loadServices,
     loadStats,
+
     addService,
     updateService,
     deleteService,

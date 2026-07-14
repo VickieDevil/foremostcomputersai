@@ -1,12 +1,16 @@
 "use client";
 
 interface Props {
-  tags: string[];
+  tags?: string[];
 }
 
 export default function CustomerTags({
-  tags,
+  tags = [],
 }: Props) {
+  if (tags.length === 0) {
+    return null;
+  }
+
   return (
     <div
       style={{

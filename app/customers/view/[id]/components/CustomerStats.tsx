@@ -1,8 +1,11 @@
 "use client";
 
+import { Customer } from "@/types/customer";
+import { Document } from "@/types/document";
+
 interface CustomerStatsProps {
-  customer: any;
-  documents: any[];
+  customer: Customer;
+  documents: Document[];
 }
 
 const cardStyle: React.CSSProperties = {
@@ -17,10 +20,26 @@ export default function CustomerStats({
   customer,
   documents,
 }: CustomerStatsProps) {
-  const totalDocuments = documents.length;
+
+  const totalDocuments =
+    documents.length;
+
+  const status =
+    customer.status ?? "Pending";
+
+  const customerSince =
+    customer.created_at
+      ? new Date(
+          customer.created_at
+        ).toLocaleDateString("en-IN")
+      : "-";
 
   return (
-    <div style={{ marginBottom: 25 }}>
+    <div
+      style={{
+        marginBottom: 25,
+      }}
+    >
       <h2
         style={{
           marginBottom: 20,
@@ -38,55 +57,97 @@ export default function CustomerStats({
           gap: 20,
         }}
       >
+
         <div style={cardStyle}>
-          <h3>📄</h3>
-          <h2>{totalDocuments}</h2>
+          <h2>📄</h2>
+
+          <h1
+            style={{
+              margin: 0,
+            }}
+          >
+            {totalDocuments}
+          </h1>
+
           <p>Total Documents</p>
         </div>
 
         <div style={cardStyle}>
-          <h3>📝</h3>
-          <h2>0</h2>
+          <h2>📝</h2>
+
+          <h1
+            style={{
+              margin: 0,
+            }}
+          >
+            0
+          </h1>
+
           <p>Activities</p>
         </div>
 
         <div style={cardStyle}>
-          <h3>🏛️</h3>
-          <h2>0</h2>
+          <h2>🏛️</h2>
+
+          <h1
+            style={{
+              margin: 0,
+            }}
+          >
+            0
+          </h1>
+
           <p>CSC Services</p>
         </div>
 
         <div style={cardStyle}>
-          <h3>💰</h3>
-          <h2>₹0</h2>
-          <p>Revenue</p>
+          <h2>💰</h2>
+
+          <h1
+            style={{
+              margin: 0,
+            }}
+          >
+            ₹0
+          </h1>
+
+          <p>Total Revenue</p>
         </div>
 
         <div style={cardStyle}>
-          <h3>
-            {customer.status === "Active"
+          <h2>
+            {status === "Active"
               ? "🟢"
+              : status === "Pending"
+              ? "🟡"
               : "🔴"}
-          </h3>
+          </h2>
 
-          <h2>{customer.status}</h2>
+          <h3
+            style={{
+              margin: 0,
+            }}
+          >
+            {status}
+          </h3>
 
           <p>Current Status</p>
         </div>
 
         <div style={cardStyle}>
-          <h3>📅</h3>
+          <h2>📅</h2>
 
-          <h2>
-            {customer.created_at
-              ? new Date(
-                  customer.created_at
-                ).toLocaleDateString()
-              : "-"}
-          </h2>
+          <h3
+            style={{
+              margin: 0,
+            }}
+          >
+            {customerSince}
+          </h3>
 
           <p>Customer Since</p>
         </div>
+
       </div>
     </div>
   );

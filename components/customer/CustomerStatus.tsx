@@ -1,10 +1,7 @@
 "use client";
 
 interface Props {
-  status:
-    | "Active"
-    | "Pending"
-    | "Blocked";
+  status?: "Active" | "Pending" | "Blocked";
 }
 
 const colors = {
@@ -14,7 +11,7 @@ const colors = {
 };
 
 export default function CustomerStatus({
-  status,
+  status = "Pending",
 }: Props) {
   return (
     <span

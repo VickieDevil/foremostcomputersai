@@ -58,7 +58,7 @@ export default function CustomerSelector({
             key={customer.id}
             value={customer.id}
           >
-            {customer.full_name} - {customer.mobile}
+            {customer.name} - {customer.mobile}
           </option>
         ))}
       </select>

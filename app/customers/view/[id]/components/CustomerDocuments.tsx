@@ -1,9 +1,11 @@
 "use client";
 
+import { Document } from "@/types/document";
+
 interface CustomerDocumentsProps {
   customerId: string;
 
-  documents: any[];
+  documents: Document[];
 
   deleteDocument: (
     id: string,
@@ -26,26 +28,42 @@ export default function CustomerDocuments({
         boxShadow: "0 2px 8px rgba(0,0,0,.08)",
       }}
     >
-      <h2
+      <div
         style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
           marginBottom: 20,
-          color: "#1f2937",
         }}
       >
-        📄 Customer Documents
-      </h2>
+        <h2
+          style={{
+            margin: 0,
+            color: "#1f2937",
+          }}
+        >
+          📄 Customer Documents
+        </h2>
+
+        <button
+          style={button("#2563eb")}
+        >
+          + Upload
+        </button>
+      </div>
 
       {documents.length === 0 ? (
         <div
           style={{
-            padding: 30,
+            padding: 40,
             textAlign: "center",
-            background: "#f8fafc",
             borderRadius: 10,
+            background: "#f8fafc",
             color: "#64748b",
+            border: "1px dashed #cbd5e1",
           }}
         >
-          No Documents Uploaded
+          No Documents Uploaded Yet
         </div>
       ) : (
         <table
@@ -61,63 +79,91 @@ export default function CustomerDocuments({
                 color: "#fff",
               }}
             >
-              <th style={{ padding: 12 }}>Document</th>
-              <th>Type</th>
-              <th>Uploaded</th>
-              <th>Actions</th>
+              <th style={th}>Document</th>
+              <th style={th}>Type</th>
+              <th style={th}>Uploaded</th>
+              <th style={th}>Actions</th>
             </tr>
           </thead>
 
           <tbody>
-            {documents.map((doc: any) => (
+            {documents.map((doc) => (
               <tr
                 key={doc.id}
                 style={{
-                  borderBottom: "1px solid #e5e7eb",
+                  borderBottom:
+                    "1px solid #e5e7eb",
                 }}
               >
-                <td style={{ padding: 12 }}>
-                  {doc.document_name}
+                <td style={td}>
+                  {doc.title ??
+                    doc.file_name ??
+                    "-"}
                 </td>
 
-                <td>{doc.document_type}</td>
-
-                <td>
-                  {new Date(doc.created_at).toLocaleDateString()}
+                <td style={td}>
+                  {doc.document_type ??
+                    "-"}
                 </td>
 
-                <td>
+                <td style={td}>
+                  {doc.created_at
+                    ? new Date(
+                        doc.created_at
+                      ).toLocaleDateString(
+                        "en-IN"
+                      )
+                    : "-"}
+                </td>
+
+                <td style={td}>
                   <div
                     style={{
                       display: "flex",
                       gap: 8,
+                      flexWrap: "wrap",
                     }}
                   >
-                    <a
-                      href={doc.file_url}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <button style={button("#16a34a")}>
-                        View
-                      </button>
-                    </a>
+                    {doc.file_url && (
+                      <>
+                        <a
+                          href={doc.file_url}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          <button
+                            style={button(
+                              "#16a34a"
+                            )}
+                          >
+                            View
+                          </button>
+                        </a>
 
-                    <a
-                      href={doc.file_url}
-                      download
-                    >
-                      <button style={button("#2563eb")}>
-                        Download
-                      </button>
-                    </a>
+                        <a
+                          href={doc.file_url}
+                          download
+                        >
+                          <button
+                            style={button(
+                              "#2563eb"
+                            )}
+                          >
+                            Download
+                          </button>
+                        </a>
+                      </>
+                    )}
 
                     <button
-                      style={button("#dc2626")}
+                      style={button(
+                        "#dc2626"
+                      )}
                       onClick={async () => {
-                        const ok = confirm(
-                          `Delete ${doc.document_name}?`
-                        );
+                        const ok =
+                          confirm(
+                            `Delete "${doc.title ?? doc.file_name}" ?`
+                          );
 
                         if (!ok) return;
 
@@ -140,7 +186,18 @@ export default function CustomerDocuments({
   );
 }
 
-function button(color: string): React.CSSProperties {
+const th: React.CSSProperties = {
+  padding: 12,
+  textAlign: "left",
+};
+
+const td: React.CSSProperties = {
+  padding: 12,
+};
+
+function button(
+  color: string
+): React.CSSProperties {
   return {
     background: color,
     color: "#fff",

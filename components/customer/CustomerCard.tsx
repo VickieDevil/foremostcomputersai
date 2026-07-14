@@ -1,23 +1,14 @@
 "use client";
 
+import { Customer } from "@/types/customer";
+
 import CustomerAvatar from "./CustomerAvatar";
 import CustomerStatus from "./CustomerStatus";
 import CustomerTags from "./CustomerTags";
 import CustomerActions from "./CustomerActions";
 
 interface Props {
-  customer: {
-    id: string;
-    name: string;
-    mobile: string;
-    email?: string;
-    status:
-      | "Active"
-      | "Pending"
-      | "Blocked";
-    tags: string[];
-    image?: string | null;
-  };
+  customer: Customer;
 }
 
 export default function CustomerCard({
@@ -39,14 +30,15 @@ export default function CustomerCard({
           justifyContent: "space-between",
         }}
       >
-        <CustomerAvatar
-          name={customer.name}
-          image={customer.image}
-        />
-
+<CustomerAvatar
+  name={customer.full_name ?? customer.name}
+  image={undefined}
+/>
         <CustomerStatus
-          status={customer.status}
-        />
+
+    status={customer.status ?? "Pending"}
+/>
+
       </div>
 
       <h3
@@ -55,7 +47,7 @@ export default function CustomerCard({
           marginBottom: 5,
         }}
       >
-        {customer.name}
+        {customer.full_name ?? customer.name}
       </h3>
 
       <div
@@ -82,9 +74,7 @@ export default function CustomerCard({
           marginTop: 16,
         }}
       >
-        <CustomerTags
-          tags={customer.tags}
-        />
+        <CustomerTags />
       </div>
 
       <div
@@ -92,7 +82,9 @@ export default function CustomerCard({
           marginTop: 20,
         }}
       >
-        <CustomerActions />
+        <CustomerActions
+    customerId={customer.id}
+/>
       </div>
     </div>
   );

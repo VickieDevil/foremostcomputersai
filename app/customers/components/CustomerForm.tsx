@@ -1,226 +1,320 @@
 "use client";
 
-import { useState, ChangeEvent, FormEvent } from "react";
-import { useCustomer } from "../../../hooks/useCustomer";
-import { CustomerFormData } from "../../../types/customer";
+import { useEffect, useState } from "react";
 
-const inputStyle = {
-  width: "100%",
-  padding: "12px",
-  border: "1px solid #d1d5db",
-  borderRadius: "8px",
-  marginTop: "6px",
-  marginBottom: "15px",
-  fontSize: "15px",
-  outline: "none",
-};
+import { Customer } from "@/types/customer";
+import { useCustomer } from "@/hooks/useCustomer";
 
-const initialForm: CustomerFormData = {
-  full_name: "",
+type Mode = "create" | "edit";
+
+interface Props {
+  mode?: Mode;
+  customer?: Customer | null;
+  onSuccess?: () => void;
+  onCancel?: () => void;
+}
+
+interface FormState {
+  name: string;
+  mobile: string;
+  email: string;
+  address: string;
+  aadhaar: string;
+  pan: string;
+  status: "Active" | "Pending" | "Blocked";
+}
+
+const initialState: FormState = {
+  name: "",
   mobile: "",
   email: "",
   address: "",
   aadhaar: "",
   pan: "",
-  dob: "",
-  gender: "",
   status: "Active",
 };
 
-export default function CustomerForm() {
-  const { saveCustomer, loading } = useCustomer();
+export default function CustomerForm({
+  mode = "create",
+  customer,
+  onSuccess,
+  onCancel,
+}: Props) {
+  const {
+    createCustomer,
+    updateCustomer,
+    loading,
+  } = useCustomer();
 
-  const [formData, setFormData] = useState<CustomerFormData>(initialForm);
+  const [form, setForm] =
+    useState<FormState>(initialState);
 
-  const [message, setMessage] = useState("");
-  const [messageColor, setMessageColor] = useState("#0284c7");
+  const [error, setError] =
+    useState("");
 
-  function handleChange(
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  useEffect(() => {
+    if (mode === "edit" && customer) {
+      setForm({
+        name: customer.name ?? "",
+        mobile: customer.mobile ?? "",
+        email: customer.email ?? "",
+        address: customer.address ?? "",
+        aadhaar: customer.aadhaar ?? "",
+        pan: customer.pan ?? "",
+        status: customer.status ?? "Active",
+      });
+    }
+  }, [mode, customer]);
+
+  function change(
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement
+    >
   ) {
-    setFormData((prev) => ({
+    setForm((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
+
+    if (error) {
+      setError("");
+    }
   }
 
-  async function handleSubmit(
-    e: FormEvent<HTMLFormElement>
+  async function submit(
+    e: React.FormEvent<HTMLFormElement>
   ) {
     e.preventDefault();
 
-    setMessage("");
+    const data: FormState = {
+      name: form.name.trim(),
+      mobile: form.mobile.trim(),
+      email: form.email.trim(),
+      address: form.address.trim(),
+      aadhaar: form.aadhaar.trim(),
+      pan: form.pan.trim().toUpperCase(),
+      status: form.status,
+    };
 
-    if (formData.mobile.length !== 10) {
-      setMessageColor("#dc2626");
-      setMessage("❌ Mobile number must be 10 digits");
+    if (data.name.length < 3) {
+      setError(
+        "Customer name must contain at least 3 characters."
+      );
       return;
     }
 
-    if (formData.aadhaar && formData.aadhaar.length !== 12) {
-      setMessageColor("#dc2626");
-      setMessage("❌ Aadhaar must be 12 digits");
+    if (!/^\d{10}$/.test(data.mobile)) {
+      setError(
+        "Mobile number must be exactly 10 digits."
+      );
       return;
     }
 
-    if (formData.pan && formData.pan.length !== 10) {
-      setMessageColor("#dc2626");
-      setMessage("❌ Invalid PAN Number");
+    if (
+      data.aadhaar &&
+      !/^\d{12}$/.test(data.aadhaar)
+    ) {
+      setError(
+        "Aadhaar number must be exactly 12 digits."
+      );
       return;
     }
 
-    const success = await saveCustomer(formData);
+    if (
+      data.pan &&
+      !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(
+        data.pan
+      )
+    ) {
+      setError(
+        "Invalid PAN number."
+      );
+      return;
+    }
 
-    if (success) {
-      setMessageColor("#16a34a");
-      setMessage("✅ Customer Saved Successfully");
+    let success = false;
 
-      setFormData(initialForm);
+    if (mode === "create") {
+      success =
+        await createCustomer(data);
     } else {
-      setMessageColor("#dc2626");
-      setMessage("❌ Unable To Save Customer");
+      if (!customer) return;
+
+      success =
+        await updateCustomer(
+          customer.id,
+          data
+        );
     }
+
+    if (!success) {
+      setError(
+        "Unable to save customer."
+      );
+      return;
+    }
+
+    if (mode === "create") {
+      setForm(initialState);
+    }
+
+    onSuccess?.();
   }
 
+  const inputStyle = {
+    width: "100%",
+    padding: 12,
+    border: "1px solid #d1d5db",
+    borderRadius: 8,
+    marginBottom: 16,
+    fontSize: 15,
+  };
+
   return (
-    <div
+    <form
+      onSubmit={submit}
       style={{
-        maxWidth: 750,
-        margin: "40px auto",
+        maxWidth: 760,
+        margin: "0 auto",
         background: "#fff",
         padding: 30,
-        borderRadius: 10,
-        boxShadow: "0 3px 12px rgba(0,0,0,.12)",
+        borderRadius: 12,
+        boxShadow:
+          "0 2px 10px rgba(0,0,0,.08)",
       }}
     >
-      <h2 style={{ marginBottom: 20 }}>
-        Add New Customer
+      <h2
+        style={{
+          marginBottom: 24,
+        }}
+      >
+        {mode === "create"
+          ? "Add Customer"
+          : "Edit Customer"}
       </h2>
 
-      {message && (
+      {error && (
         <div
           style={{
-            background: "#f8fafc",
-            color: messageColor,
-            border: `1px solid ${messageColor}`,
+            background: "#fee2e2",
+            color: "#b91c1c",
             padding: 12,
-            marginBottom: 20,
             borderRadius: 8,
-            fontWeight: 600,
+            marginBottom: 20,
+            border:
+              "1px solid #fecaca",
           }}
         >
-          {message}
+          {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="full_name"
-          placeholder="Full Name"
-          value={formData.full_name}
-          onChange={handleChange}
-          style={inputStyle}
-          required
-        />
+      <input
+        name="name"
+        placeholder="Customer Name"
+        value={form.name}
+        onChange={change}
+        style={inputStyle}
+      />
 
-        <input
-          type="text"
-          name="mobile"
-          placeholder="Mobile Number"
-          value={formData.mobile}
-          onChange={handleChange}
-          style={inputStyle}
-          maxLength={10}
-          required
-        />
+      <input
+        name="mobile"
+        placeholder="Mobile Number"
+        value={form.mobile}
+        onChange={change}
+        style={inputStyle}
+      />
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email Address"
-          value={formData.email}
-          onChange={handleChange}
-          style={inputStyle}
-        />
+      <input
+        name="email"
+        placeholder="Email"
+        value={form.email}
+        onChange={change}
+        style={inputStyle}
+      />
 
-        <input
-          type="text"
-          name="address"
-          placeholder="Address"
-          value={formData.address}
-          onChange={handleChange}
-          style={inputStyle}
-        />
+      <input
+        name="address"
+        placeholder="Address"
+        value={form.address}
+        onChange={change}
+        style={inputStyle}
+      />
 
-        <input
-          type="text"
-          name="aadhaar"
-          placeholder="Aadhaar Number"
-          value={formData.aadhaar}
-          onChange={handleChange}
-          style={inputStyle}
-          maxLength={12}
-        />
+      <input
+        name="aadhaar"
+        placeholder="Aadhaar Number"
+        value={form.aadhaar}
+        onChange={change}
+        style={inputStyle}
+      />
 
-        <input
-          type="text"
-          name="pan"
-          placeholder="PAN Number"
-          value={formData.pan}
-          onChange={handleChange}
-          style={inputStyle}
-          maxLength={10}
-        />
+      <input
+        name="pan"
+        placeholder="PAN Number"
+        value={form.pan}
+        onChange={change}
+        style={inputStyle}
+      />
 
-        <input
-          type="date"
-          name="dob"
-          value={formData.dob}
-          onChange={handleChange}
-          style={inputStyle}
-        />
+      <select
+        name="status"
+        value={form.status}
+        onChange={change}
+        style={inputStyle}
+      >
+        <option value="Active">
+          Active
+        </option>
 
-        <select
-          name="gender"
-          value={formData.gender}
-          onChange={handleChange}
-          style={inputStyle}
-        >
-          <option value="">Select Gender</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-          <option value="Other">Other</option>
-        </select>
+        <option value="Pending">
+          Pending
+        </option>
 
-        <select
-          name="status"
-          value={formData.status}
-          onChange={handleChange}
-          style={inputStyle}
-        >
-          <option value="Active">Active</option>
-          <option value="Inactive">Inactive</option>
-        </select>
+        <option value="Blocked">
+          Blocked
+        </option>
+      </select>
+
+      <div
+        style={{
+          display: "flex",
+          gap: 12,
+        }}
+      >
+        {onCancel && (
+          <button
+            type="button"
+            onClick={onCancel}
+            style={{
+              flex: 1,
+              padding: 12,
+            }}
+          >
+            Cancel
+          </button>
+        )}
 
         <button
           type="submit"
           disabled={loading}
           style={{
-            width: "100%",
-            padding: "14px",
-            background: loading ? "#94a3b8" : "#2563eb",
+            flex: 1,
+            padding: 12,
+            border: 0,
+            borderRadius: 8,
+            background: "#2563eb",
             color: "#fff",
-            border: "none",
-            borderRadius: "8px",
-            fontSize: "16px",
-            cursor: loading ? "not-allowed" : "pointer",
-            transition: ".2s",
+            cursor: "pointer",
           }}
         >
-          {loading ? "Saving Customer..." : "Save Customer"}
+          {loading
+            ? "Saving..."
+            : mode === "create"
+            ? "Create Customer"
+            : "Update Customer"}
         </button>
-      </form>
-    </div>
+      </div>
+    </form>
   );
 }

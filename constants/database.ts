@@ -1,5 +1,28 @@
 export const TABLES = {
 
+  // ==========================
+  // Customer Module
+  // ==========================
+
+  CUSTOMERS:
+    "customers",
+
+  CUSTOMER_SERVICES:
+    "customer_services",
+
+  DOCUMENTS:
+    "documents",
+
+  BILLINGS:
+    "billings",
+
+  ACTIVITIES:
+    "activities",
+
+  // ==========================
+  // WhatsApp Module
+  // ==========================
+
   WHATSAPP_CONTACTS:
     "whatsapp_contacts",
 
@@ -9,13 +32,13 @@ export const TABLES = {
   WHATSAPP_CHAT_LIST:
     "whatsapp_chat_list",
 
-  CUSTOMERS:
-    "customers",
+  WHATSAPP_LABELS:
+    "whatsapp_labels",
 
-  DOCUMENTS:
-    "documents",
+  WHATSAPP_BROADCASTS:
+    "whatsapp_broadcasts",
 
-  BILLINGS:
-    "billings",
+  WHATSAPP_TEMPLATES:
+    "whatsapp_templates",
 
 } as const;

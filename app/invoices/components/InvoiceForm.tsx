@@ -127,7 +127,11 @@ const saving =
 
     if (!customer) return;
 
-    setCustomerName(customer.full_name);
+    setCustomerName(
+  customer.full_name ??
+  customer.name ??
+  ""
+);
 
     setCustomerMobile(customer.mobile);
 

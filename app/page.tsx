@@ -8,7 +8,7 @@ import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import DashboardCard from "./components/DashboardCard";
 
-import { CustomerService } from "../services/customer.service";
+import { customerService } from "../services/customer.service";
 import { DocumentService } from "../services/document.service";
 export default function Home() {
   const [customers, setCustomers] = useState<any[]>([]);
@@ -24,43 +24,71 @@ const [documentCount, setDocumentCount] = useState(0);
   async function loadDashboard() {
   try {
     // Customers
-    const customerData = await CustomerService.getCustomers();
-    const customerList = customerData || [];
+    const response =
+      await customerService.getCustomers();
+
+    const customerList =
+      response.data ?? [];
 
     setCustomers(customerList);
+
     setCustomerCount(customerList.length);
 
     setActiveCustomers(
       customerList.filter(
-        (c: any) => c.status?.toLowerCase() === "active"
+        (c: any) =>
+          c.status?.toLowerCase() ===
+          "active"
       ).length
     );
 
-    const today = new Date().toISOString().split("T")[0];
+    const today = new Date()
+      .toISOString()
+      .split("T")[0];
 
     setTodayCustomers(
-      customerList.filter((c: any) =>
-        c.created_at?.startsWith(today)
+      customerList.filter(
+        (c: any) =>
+          c.created_at?.startsWith(
+            today
+          )
       ).length
     );
 
     // Documents
-    const documentData = await DocumentService.getAllDocuments();
+    const documentData =
+      await DocumentService.getAllDocuments();
 
-    setDocumentCount(documentData?.length || 0);
+    setDocumentCount(
+      documentData.length
+    );
 
   } catch (error) {
+
     console.error(error);
+
+    setCustomers([]);
+
+    setCustomerCount(0);
+
+    setActiveCustomers(0);
+
+    setTodayCustomers(0);
+
+    setDocumentCount(0);
+
   }
 }
 
-  return (
-    <div
-      style={{
-        display: "flex",
-        minHeight: "100vh",
-        background: "#f3f4f6",
-      }}
+return (
+
+  <div
+    style={{
+      display: "flex",
+      minHeight: "100vh",
+      background: "#f3f4f6",
+    }}
+  
     >
       <Sidebar />
 

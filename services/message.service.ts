@@ -11,10 +11,13 @@ export class MessageService {
 
     try {
 
-      return await whatsappService.sendMessage(
-        contactId,
-        message
-      );
+      const response =
+        await whatsappService.sendMessage(
+          contactId,
+          message
+        );
+
+      return response.data;
 
     } catch (error) {
 
@@ -33,10 +36,13 @@ export class MessageService {
 
     try {
 
-      return await whatsappService.receiveMessage(
-        contactId,
-        message
-      );
+      const response =
+        await whatsappService.receiveMessage(
+          contactId,
+          message
+        );
+
+      return response.data;
 
     } catch (error) {
 

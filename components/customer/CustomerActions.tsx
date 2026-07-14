@@ -1,14 +1,14 @@
 "use client";
 
+import Link from "next/link";
+
 interface Props {
-  onView?: () => void;
-  onEdit?: () => void;
+  customerId: string;
   onDelete?: () => void;
 }
 
 export default function CustomerActions({
-  onView,
-  onEdit,
+  customerId,
   onDelete,
 }: Props) {
   return (
@@ -18,16 +18,22 @@ export default function CustomerActions({
         gap: 10,
       }}
     >
-      <button onClick={onView}>
-        👁
-      </button>
+      <Link href={`/customers/view/${customerId}`}>
+        <button>👁 View</button>
+      </Link>
 
-      <button onClick={onEdit}>
-        ✏️
-      </button>
+      <Link href={`/customers/edit/${customerId}`}>
+        <button>✏️ Edit</button>
+      </Link>
 
-      <button onClick={onDelete}>
-        🗑
+      <button
+        onClick={onDelete}
+        style={{
+          color: "#fff",
+          background: "#dc2626",
+        }}
+      >
+        🗑 Delete
       </button>
     </div>
   );

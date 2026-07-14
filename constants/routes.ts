@@ -1,18 +1,21 @@
 export const ROUTES = {
+
   HOME: "/",
+
+  LOGIN: "/login",
+
   DASHBOARD: "/dashboard",
 
   CUSTOMERS: "/customers",
-
-  WHATSAPP: "/whatsapp",
 
   DOCUMENTS: "/documents",
 
   BILLING: "/billing",
 
+  WHATSAPP: "/whatsapp",
+
   REPORTS: "/reports",
 
   SETTINGS: "/settings",
 
-  LOGIN: "/login",
-} as const;
+};
